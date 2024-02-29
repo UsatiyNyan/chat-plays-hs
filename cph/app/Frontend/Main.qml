@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import Frontend
+import Frontend.Colors
 
 ApplicationWindow {
     id: root
@@ -14,7 +15,7 @@ ApplicationWindow {
         id: background
         width: root.width
         height: root.height
-        color: "black"
+        color: Colors.background
         opacity: 0.8
     }
 }
