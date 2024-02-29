@@ -1,0 +1,3 @@
+module Frontend.Resources
+
+singleton ImageResources 1.0 ImageResources.qml

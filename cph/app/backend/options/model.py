@@ -1,7 +1,14 @@
 from dataclasses import dataclass
 from enum import IntEnum, auto
 
-from PyQt6.QtCore import Qt, QObject, QAbstractListModel, QModelIndex, QByteArray
+from PySide6.QtCore import (
+    Qt,
+    QObject,
+    QAbstractListModel,
+    QModelIndex,
+    QPersistentModelIndex,
+    QByteArray
+)
 
 from cph.utils.math import safe_fraction
 from cph.gamestate.model import GameOption
@@ -27,7 +34,7 @@ class DisplayOptionsModel(QAbstractListModel):
         super().__init__(parent)
         self._display_options: list[DisplayOption] = []
 
-    def rowCount(self, parent: QModelIndex = QModelIndex()) -> int:
+    def rowCount(self, parent: QModelIndex | QPersistentModelIndex = QModelIndex()) -> int:
         _ = parent
         return len(self._display_options)
 
@@ -39,7 +46,7 @@ class DisplayOptionsModel(QAbstractListModel):
             self.Roles.VoteFraction: QByteArray(b'vote_fraction'),
         }
 
-    def data(self, index: QModelIndex, role: int = Qt.ItemDataRole.UserRole) -> str | float | None:
+    def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.UserRole) -> str | float | None:
         if index.row() < 0 or index.row() >= self.rowCount():
             return None
 
@@ -80,7 +87,9 @@ class DisplayOptionsModel(QAbstractListModel):
     def update_votes(self, vote_options: list[VoteOption]):
         votes_max = max(vote_option.votes for vote_option in vote_options)
         for display_option, vote_option in zip(self._display_options, vote_options):
-            display_option.vote_fraction = safe_fraction(vote_option.votes, votes_max)
+            display_option.vote_fraction = safe_fraction(
+                vote_option.votes, votes_max)
 
         if (row_count := self.rowCount()) > 0:
-            self.dataChanged.emit(self.index(0), self.index(row_count - 1), [self.Roles.VoteFraction])
+            self.dataChanged.emit(self.index(0), self.index(
+                row_count - 1), [self.Roles.VoteFraction])

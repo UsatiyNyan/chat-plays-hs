@@ -1,0 +1,3 @@
+module Frontend.Components
+
+ResizeButton 1.0 ResizeButton.qml
