@@ -17,5 +17,8 @@
     <file>Components/ResizeButton.qml</file>
     <file>Components/CloseButton.qml</file>
     <file>Components/WindowControlButton.qml</file>
+
+    <file>Tabs/qmldir</file>
+    <file>Tabs/StackTabView.qml</file>
 </qresource>
 </RCC>

@@ -4,6 +4,7 @@ import QtQuick.Controls
 import Frontend.Colors
 import Frontend.Components
 import Frontend.Utils
+import Frontend.Tabs
 
 ApplicationWindow {
     id: root
@@ -16,6 +17,10 @@ ApplicationWindow {
     WindowDragArea {
         dragWindow: root
         anchors.fill: parent
+    }
+
+    StackTabView {
+        anchors { fill: parent; margins: Units.px(10) }
     }
 
     CloseButton {

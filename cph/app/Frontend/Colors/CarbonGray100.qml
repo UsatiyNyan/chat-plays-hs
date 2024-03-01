@@ -5,7 +5,9 @@ QtObject {
     readonly property color white: "#ffffff"
 
     readonly property color gray10: "#f4f4f4"
+    readonly property color gray10Hover: "#e5e5e5"
     readonly property color gray30: "#c6c6c6"
+    readonly property color gray50: "#8d8d8d"
     readonly property color gray60: "#6f6f6f"
     readonly property color gray60Hover: "#606060"
     readonly property color gray70: "#525252"
@@ -23,6 +25,12 @@ QtObject {
 
     // background
     readonly property color background: gray100
+    readonly property color backgroundHover: Qt.alpha(gray50, 0.16)
+    readonly property color backgroundActive: Qt.alpha(gray50, 0.40)
+    readonly property color backgroundSelected: Qt.alpha(gray50, 0.24)
+    readonly property color backgroundSelectedHover: Qt.alpha(gray50, 0.32)
+    readonly property color backgroundInverse: gray10
+    readonly property color backgroundInverseHover: gray10Hover
 
     // icon
     readonly property color iconPrimary: gray10

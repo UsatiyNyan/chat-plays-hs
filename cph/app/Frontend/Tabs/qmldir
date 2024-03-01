@@ -1,0 +1,3 @@
+module Frontend.Tabs
+
+StackTabView 1.0 StackTabView.qml
