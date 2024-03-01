@@ -1,27 +1,28 @@
 import sys
 import logging
-from pathlib import Path
 
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQuickControls2 import QQuickStyle
 
+import cph.app.resources_rc
+import cph.app.app_rc
+
 import cph.utils.logging as cph_logging
 
 
 def main(argv):
-    main_logger = cph_logging.make_logger('main', logging.ERROR)
+    main_logger = cph_logging.make_logger('main', logging.DEBUG)
 
     app = QGuiApplication(argv)
-    app.setOrganizationName("@UsatiyNyan")
-    app.setApplicationName("Chat Plays HS")
+    app.setOrganizationName('@UsatiyNyan')
+    app.setApplicationName('Chat Plays HS')
 
-    QQuickStyle.setStyle("Basic")
+    QQuickStyle.setStyle('Basic')
+
     engine = QQmlApplicationEngine()
-
-    curr_dir = Path(__file__).parent.resolve()
-    engine.addImportPath(curr_dir)
-    engine.loadFromModule("Frontend", "Main")
+    engine.addImportPath(':/')
+    engine.loadFromModule('Frontend', 'Main.qml')
 
     if not engine.rootObjects():
         main_logger.error('Failed to load QML file')
