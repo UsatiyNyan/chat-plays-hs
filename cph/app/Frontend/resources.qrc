@@ -1,6 +1,6 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
 <qresource prefix="/">
-    <file>resources/images/resize.svg</file>
+    <file>resources/icons/resize.svg</file>
 </qresource>
 </RCC>

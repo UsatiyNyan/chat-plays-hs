@@ -3,10 +3,14 @@ import QtQuick
 
 QtObject {
     function resourcesRoot() {
-        return "qrc:/resources/"
+        return 'qrc:/resources/'
     }
 
-    function imagePath(imageFile) {
-        return resourcesRoot() + "images/" + imageFile
+    function image(imageName) {
+        return resourcesRoot() + 'images/' + imageFile + '.png'
+    }
+
+    function icon(iconName) {
+        return resourcesRoot() + 'icons/' + iconName + '.svg'
     }
 }
