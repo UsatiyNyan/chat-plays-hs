@@ -1,14 +1,14 @@
 import QtQuick
 import QtQuick.Controls
 
-import Frontend
 import Frontend.Colors
 import Frontend.Components
+import Frontend.Utils
 
 ApplicationWindow {
     id: root
-    width: 1100
-    height: 600
+    width: Units.px(400)
+    height: Units.px(800)
     visible: true
     flags: Qt.Window | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
 
@@ -17,6 +17,10 @@ ApplicationWindow {
         width: root.width
         height: root.height
         color: Colors.background
+    }
+
+    WindowDragHandler {
+        dragWindow: root
     }
 
     ResizeButton {

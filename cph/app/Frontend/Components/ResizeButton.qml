@@ -7,8 +7,8 @@ import Frontend.Utils
 Button {
     id: root
 
-    property var target
-    property int edge
+    required property var target
+    required property int edge
 
     width: Units.px(20)
     height: Units.px(20)
@@ -18,8 +18,7 @@ Button {
     hoverEnabled: true
     
     transform: Rotation {
-        origin.x: width / 2
-        origin.y: height / 2
+        origin { x: width / 2; y: height / 2 }
         angle: edge & Qt.LeftEdge ? 90 : 0
     }
 

@@ -14,5 +14,6 @@
     
     <file>Components/qmldir</file>
     <file>Components/ResizeButton.qml</file>
+    <file>Components/WindowDragHandler.qml</file>
 </qresource>
 </RCC>
