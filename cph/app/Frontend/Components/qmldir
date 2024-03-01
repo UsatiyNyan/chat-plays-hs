@@ -1,4 +1,6 @@
 module Frontend.Components
 
 ResizeButton 1.0 ResizeButton.qml
-WindowDragHandler 1.0 WindowDragHandler.qml
+CloseButton 1.0 CloseButton.qml
+WindowDragArea 1.0 WindowDragArea.qml
+WindowControlButton 1.0 WindowControlButton.qml

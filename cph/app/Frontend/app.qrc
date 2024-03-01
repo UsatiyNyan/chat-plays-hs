@@ -13,7 +13,9 @@
     <file>Colors/CarbonGray100.qml</file>
     
     <file>Components/qmldir</file>
+    <file>Components/WindowDragArea.qml</file>
     <file>Components/ResizeButton.qml</file>
-    <file>Components/WindowDragHandler.qml</file>
+    <file>Components/CloseButton.qml</file>
+    <file>Components/WindowControlButton.qml</file>
 </qresource>
 </RCC>

@@ -13,9 +13,14 @@ ApplicationWindow {
     flags: Qt.Window | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
     color: Colors.background
 
-    WindowDragHandler {
+    WindowDragArea {
         dragWindow: root
         anchors.fill: parent
+    }
+
+    CloseButton {
+        anchors { right: parent.right; top: parent.top }
+        target: root
     }
 
     ResizeButton {
