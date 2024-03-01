@@ -1,13 +1,19 @@
 import QtQuick
 import QtQuick.Controls
 
-DragHandler {
+Item {
     required property ApplicationWindow dragWindow
+    
+    DragHandler {
+        target: null
+        cursorShape: Qt.ClosedHandCursor
 
-    target: null
-    cursorShape: Qt.ClosedHandCursor
+        onActiveChanged: {
+            if (active) dragWindow.startSystemMove()
+        }
+    }
 
-    onActiveChanged: {
-        if (active) dragWindow.startSystemMove()
+    HoverHandler {
+        cursorShape: Qt.OpenHandCursor
     }
 }

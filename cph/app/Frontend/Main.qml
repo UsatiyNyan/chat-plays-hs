@@ -11,23 +11,15 @@ ApplicationWindow {
     height: Units.px(800)
     visible: true
     flags: Qt.Window | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
-
-    Rectangle {
-        id: background
-        width: root.width
-        height: root.height
-        color: Colors.background
-    }
+    color: Colors.background
 
     WindowDragHandler {
         dragWindow: root
+        anchors.fill: parent
     }
 
     ResizeButton {
-        anchors {
-            left: parent.left
-            bottom: parent.bottom
-        }
+        anchors { left: parent.left; bottom: parent.bottom }
         target: root
         edge: Qt.BottomEdge | Qt.LeftEdge
     }
