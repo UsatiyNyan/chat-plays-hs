@@ -1,6 +1,6 @@
 import QtQuick
 
-import Frontend.Colors
+import Frontend.Styles
 
 Item {
     id: root

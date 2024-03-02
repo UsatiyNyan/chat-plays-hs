@@ -8,9 +8,9 @@
     <file>Utils/Resources.qml</file>
     <file>Utils/Units.qml</file>
 
-    <file>Colors/qmldir</file>
-    <file>Colors/Colors.qml</file>
-    <file>Colors/CarbonGray100.qml</file>
+    <file>Styles/qmldir</file>
+    <file>Styles/Colors.qml</file>
+    <file>Styles/CarbonGray100.qml</file>
     
     <file>Components/qmldir</file>
     <file>Components/WindowDragArea.qml</file>

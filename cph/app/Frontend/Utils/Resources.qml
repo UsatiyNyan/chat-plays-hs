@@ -13,4 +13,8 @@ QtObject {
     function icon(iconName) {
         return resourcesRoot() + 'icons/' + iconName + '.svg'
     }
+
+    function font(fontName) {
+        return resourcesRoot() + 'fonts/' + fontName + '.ttf'
+    }
 }

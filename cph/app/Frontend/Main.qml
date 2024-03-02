@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 
-import Frontend.Colors
+import Frontend.Styles
 import Frontend.Components
 import Frontend.Utils
 import Frontend.Tabs

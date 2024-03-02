@@ -26,6 +26,7 @@ QtObject {
     readonly property color red60Hover: "#ba1b23"
     readonly property color red80: "#750e13"
 
+    readonly property color blue50: "#4589ff"
     readonly property color blue60: "#0f62fe"
     readonly property color blue60Hover: "#0353e9"
     readonly property color blue80: "#002d9c"
