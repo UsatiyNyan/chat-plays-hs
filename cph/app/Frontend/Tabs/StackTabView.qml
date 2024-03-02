@@ -11,6 +11,15 @@ Item {
     readonly property int contentHeight: height - (headerHeight * listView.model.count) 
     readonly property bool isExpanded: listView.currentIndex !== -1
 
+    StackTabPlaceholder {
+        anchors {
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
+        height: contentHeight
+    }
+
     ListView {
         id: listView
 
@@ -55,21 +64,6 @@ Item {
                     return StackTabHeader.State.OnBottom
                 }
                 return StackTabHeader.State.Selected
-            }
-        }
-    }
-
-    StackTabPlaceholder {
-        anchors {
-            left: parent.left
-            right: parent.right
-            bottom: parent.bottom
-        }
-        height: isExpanded ? 0 : contentHeight
-        Behavior on height {
-            PropertyAnimation {
-                duration: 200
-                easing.type: Easing.InOutQuad
             }
         }
     }
