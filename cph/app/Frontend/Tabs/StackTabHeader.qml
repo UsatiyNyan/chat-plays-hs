@@ -18,7 +18,7 @@ Rectangle {
     property int state
     signal clicked()
 
-    color: Colors.buttonPrimary
+    color: mouseArea.containsMouse ? Colors.layer01Hover : Colors.layer01
 
     Text {
         anchors.centerIn: parent
@@ -49,7 +49,10 @@ Rectangle {
     }
 
     MouseArea {
+        id: mouseArea
+
         anchors.fill: parent
         onClicked: root.clicked()
+        hoverEnabled: true
     }
 }
