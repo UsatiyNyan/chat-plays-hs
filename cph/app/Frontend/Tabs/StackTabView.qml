@@ -40,13 +40,23 @@ Rectangle {
 
         delegate: StackTabDelegate {
             width: listView.width
-            headerHeight: root.headerHeight
-            contentHeight: listView.currentIndex === index ? root.contentHeight : 0 
-
-            title: model.title
-            // content: model.content
-
-            onTitleClicked: listView.currentIndex = listView.currentIndex === index ? -1 : index
+            content {
+                height: listView.currentIndex === index ? root.contentHeight : 0
+            }
+            header {
+                height: root.headerHeight
+                title: model.title
+                state: _getTabHeaderState(listView.currentIndex, index)
+                onClicked: listView.currentIndex = (listView.currentIndex === index ? -1 : index)
+            }
+            function _getTabHeaderState(_currentIndex, _index) {
+                if (_currentIndex === -1 || _currentIndex > _index) {
+                    return StackTabHeader.State.OnTop
+                } else if (_currentIndex < _index) {
+                    return StackTabHeader.State.OnBottom
+                }
+                return StackTabHeader.State.Selected
+            }
         }
     }
 }
