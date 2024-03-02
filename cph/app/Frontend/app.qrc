@@ -20,5 +20,6 @@
 
     <file>Tabs/qmldir</file>
     <file>Tabs/StackTabView.qml</file>
+    <file>Tabs/StackTabDelegate.qml</file>
 </qresource>
 </RCC>
