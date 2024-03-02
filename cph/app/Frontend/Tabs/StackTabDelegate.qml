@@ -38,13 +38,22 @@ Item {
     Rectangle {
         id: content
 
-        height: root.contentHeight
         anchors {
             top: header.bottom
             left: parent.left
             right: parent.right
+            bottom: parent.bottom
         }
         color: Colors.buttonSecondary
+    }
+
+    Behavior on height {
+        PropertyAnimation {
+            duration: 200
+            easing {
+                type: Easing.InOutQuad
+            }
+        }
     }
 }
 
