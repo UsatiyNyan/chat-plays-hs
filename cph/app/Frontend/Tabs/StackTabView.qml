@@ -4,18 +4,17 @@ import QtQuick.Controls
 import Frontend.Styles
 import Frontend.Utils
 
-Rectangle {
+Item {
     id: root        
 
     readonly property int headerHeight: Units.px(40)
     readonly property int contentHeight: height - (headerHeight * listView.model.count) 
-
-    color: Colors.backgroundActive
+    readonly property bool isExpanded: listView.currentIndex !== -1
 
     ListView {
         id: listView
 
-        height: headerHeight * model.count + contentHeight
+        height: headerHeight * model.count + (isExpanded ? contentHeight : 0)
         anchors {
             top: parent.top
             left: parent.left
@@ -56,6 +55,21 @@ Rectangle {
                     return StackTabHeader.State.OnBottom
                 }
                 return StackTabHeader.State.Selected
+            }
+        }
+    }
+
+    StackTabPlaceholder {
+        anchors {
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
+        height: isExpanded ? 0 : contentHeight
+        Behavior on height {
+            PropertyAnimation {
+                duration: 200
+                easing.type: Easing.InOutQuad
             }
         }
     }

@@ -33,9 +33,7 @@ Item {
         Behavior on height {
             PropertyAnimation {
                 duration: 200
-                easing {
-                    type: Easing.InOutQuad
-                }
+                easing.type: Easing.InOutQuad
             }
         }
     }
