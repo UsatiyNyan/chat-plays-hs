@@ -4,6 +4,10 @@
     <file>qmldir</file>
     <file>Main.qml</file>
 
+    <file>Bindings/qmldir</file>
+    <file>Bindings/Controller.qml</file>
+    <file>Bindings/VoteModel.qml</file>
+
     <file>Utils/qmldir</file>
     <file>Utils/Resources.qml</file>
     <file>Utils/Units.qml</file>
