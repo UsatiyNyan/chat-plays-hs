@@ -6,6 +6,7 @@ import Frontend.Utils
 Item {
     id: root
 
+    property var controller
     property alias content: content
     property alias header: header
 
@@ -24,6 +25,7 @@ Item {
     Loader {
         id: content
 
+        property var controller: root.controller
         anchors {
             top: header.bottom
             left: parent.left

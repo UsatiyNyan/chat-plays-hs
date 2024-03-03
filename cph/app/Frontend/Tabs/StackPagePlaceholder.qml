@@ -17,7 +17,7 @@ Rectangle {
         wrapMode: Text.WordWrap
         text:
 `To vote type: "!vote <options>"
-e.g.: "!vote H2 P2 E1"
+e.g.: "!vote H2 P2 M1"
 
 You can only vote for up to 3 candidates!
 The lesser you choose the heftier the vote!

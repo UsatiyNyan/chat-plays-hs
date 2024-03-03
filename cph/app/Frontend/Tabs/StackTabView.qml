@@ -7,6 +7,7 @@ import Frontend.Utils
 Item {
     id: root        
 
+    required property var controller
     readonly property int headerHeight: Units.px(40)
     readonly property int contentHeight: height - (headerHeight * listView.model.count) 
     readonly property bool isExpanded: listView.currentIndex !== -1
@@ -44,9 +45,10 @@ Item {
 
         delegate: StackTabDelegate {
             width: listView.width
+            controller: root.controller
             content {
                 height: listView.currentIndex === index ? root.contentHeight : 0
-                source: model.content 
+                source: model.content
             }
             header {
                 height: root.headerHeight
