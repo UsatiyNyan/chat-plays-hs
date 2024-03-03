@@ -13,7 +13,7 @@ Column {
     property alias to: slider.to
     property alias stepSize: slider.stepSize
 
-    spacing: Units.px(8)
+    spacing: Units.px(16)
 
     Text {
         id: label

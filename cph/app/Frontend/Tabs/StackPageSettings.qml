@@ -15,7 +15,8 @@ Rectangle {
 
     Column {
         anchors.fill: parent
-        spacing: Units.px(4)
+        spacing: Units.px(16)
+        topPadding: Units.px(16)
 
         SettingsSwitch {
             id: voteEmotesSwitch
