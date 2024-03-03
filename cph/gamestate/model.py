@@ -5,7 +5,7 @@ from dataclasses import dataclass
 class GameOption:
     option: str
     group: str
-    suboptions: list['GameOption'] = []
+    suboptions: list['GameOption']
 
     def select(self, index: int) -> 'GameOption | None':
         try:

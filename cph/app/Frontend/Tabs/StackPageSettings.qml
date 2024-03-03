@@ -9,6 +9,7 @@ Rectangle {
 
     // inherited from outer Loader:
     // required property var controller
+    readonly property var voteController: controller.voteController
 
     clip: true
     color: Colors.background
@@ -24,8 +25,8 @@ Rectangle {
             width: parent.width
 
             text: 'Vote for Emotes'
-            checked: { checked = controller.voteEmotes }
-            onCheckedChanged: { controller.voteEmotes = checked }
+            checked: { checked = voteController.voteEmotes }
+            onCheckedChanged: { voteController.voteEmotes = checked }
         }
 
         Rectangle {
@@ -44,8 +45,8 @@ Rectangle {
             to: 40
             stepSize: 1
 
-            value: { value = controller.voteSecondsTotal }
-            onValueChanged: { controller.voteSecondsTotal = value }
+            value: { value = voteController.voteSecondsTotal }
+            onValueChanged: { voteController.voteSecondsTotal = value }
         }
     }
 }

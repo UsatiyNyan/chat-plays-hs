@@ -6,6 +6,7 @@
 
     <file>Bindings/qmldir</file>
     <file>Bindings/Controller.qml</file>
+    <file>Bindings/VoteController.qml</file>
     <file>Bindings/VoteModel.qml</file>
 
     <file>Utils/qmldir</file>

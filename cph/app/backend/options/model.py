@@ -11,6 +11,7 @@ from PySide6.QtCore import (
     Property,
     Signal,
 )
+from PySide6.QtQml import qmlRegisterType
 
 from cph.gamestate.model import GameOption
 from cph.vote.model import VoteOption
@@ -122,3 +123,6 @@ class DisplayOptionsModel(QAbstractListModel):
 
         self.votesMax = max(vote_option.votes for vote_option in vote_options)
         self.votesSum = sum(vote_option.votes for vote_option in vote_options)
+
+
+qmlRegisterType(DisplayOptionsModel, 'Frontend.Bindings', 1, 0, 'VoteModel')

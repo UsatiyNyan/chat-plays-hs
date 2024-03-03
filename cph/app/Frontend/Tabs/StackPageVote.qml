@@ -9,6 +9,7 @@ Rectangle {
 
     // inherited from outer Loader:
     // required property var controller
+    readonly property var voteController: controller.voteController
 
     color: Colors.background
     clip: true
@@ -23,7 +24,7 @@ Rectangle {
         }
         height: parent.height - button.height
         interactive: false
-        model: controller.voteModel
+        model: voteController.voteModel
         currentIndex: -1
 
         delegate: VoteDelegate {
@@ -31,9 +32,9 @@ Rectangle {
             alias: model.alias
             option: model.option
             votes: model.votes
-            votesMax: controller.voteModel.votesMax
-            votesSum: controller.voteModel.votesSum
-            winnerIndex: controller.voteWinnerIndex
+            votesMax: voteController.voteModel.votesMax
+            votesSum: voteController.voteModel.votesSum
+            winnerIndex: voteController.voteWinnerIndex
         }
         
         section {
@@ -53,10 +54,10 @@ Rectangle {
             left: parent.left
             right: parent.right
         }
-        secondsLeft: controller.voteSecondsLeft
-        secondsTotal: controller.voteSecondsTotal
-        inProgress: controller.voteWinnerIndex === -1
-        onClicked: controller.onVoteButtonClicked()
-        visible: inProgress || controller.voteWinnerHasCandidates
+        secondsLeft: voteController.voteSecondsLeft
+        secondsTotal: voteController.voteSecondsTotal
+        inProgress: voteController.voteWinnerIndex === -1
+        onClicked: voteController.onVoteButtonClicked()
+        visible: inProgress || voteController.voteWinnerHasCandidates
     }
 }
