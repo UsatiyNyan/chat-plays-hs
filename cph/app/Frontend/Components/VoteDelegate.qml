@@ -11,6 +11,7 @@ Item {
     property int votes
     property int votesMax
     property int votesSum
+    property int winnerIndex
 
     height: Units.px(30)
 
@@ -21,7 +22,7 @@ Item {
             leftMargin: Units.px(8)
             rightMargin: Units.px(8)
         }
-        color: Colors.layer02
+        color: Colors.background
     }
 
     Rectangle {
@@ -31,7 +32,8 @@ Item {
             left: background.left
         }
         width: MathExt.safeFraction(votes, votesMax, 0) * background.width
-        color: Colors.tagBackgroundGreen
+        color: winnerIndex === -1 || winnerIndex === index 
+        ? Colors.tagBackgroundGreen : 'transparent'
     }
 
     Rectangle {

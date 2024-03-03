@@ -24,6 +24,7 @@ Rectangle {
         height: parent.height - button.height
         interactive: false
         model: controller.voteModel
+        currentIndex: -1
 
         delegate: VoteDelegate {
             width: listView.width
@@ -32,6 +33,7 @@ Rectangle {
             votes: model.votes
             votesMax: controller.voteModel.votesMax
             votesSum: controller.voteModel.votesSum
+            winnerIndex: controller.voteWinnerIndex
         }
         
         section {
@@ -53,6 +55,7 @@ Rectangle {
         }
         secondsLeft: controller.voteSecondsLeft
         secondsTotal: controller.voteSecondsTotal
-        onClicked: controller.onEndVoteClicked()
+        inProgress: controller.voteWinnerIndex === -1
+        onClicked: controller.onVoteButtonClicked()
     }
 }

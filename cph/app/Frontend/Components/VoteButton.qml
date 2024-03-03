@@ -8,6 +8,7 @@ Item {
 
     property int secondsLeft
     property int secondsTotal
+    property bool inProgress
     signal clicked
 
     height: Units.px(35)
@@ -34,7 +35,11 @@ Item {
         color: Colors.textOnColor
         font.pixelSize: 20
 
-        text: secondsTotal > 0 ? `Vote ends in ${secondsLeft} s` : 'End vote' 
+        text: !inProgress 
+        ? 'Next vote'
+        : secondsTotal > 0 
+        ? `Vote ends in ${secondsLeft} s` 
+        : 'End vote' 
     }
 
     MouseArea {

@@ -4,9 +4,10 @@ Item {
     property ListModel voteModel: VoteModel {}
     property int voteSecondsLeft: 10
     property int voteSecondsTotal: 10
+    property int voteWinnerIndex: -1
 
-    function onEndVoteClicked() {
-        console.log("End vote clicked")
+    function onVoteButtonClicked() {
+        voteWinnerIndex = voteWinnerIndex === -1 ? 5 : -1
     }
 
     Timer {
