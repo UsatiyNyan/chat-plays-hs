@@ -52,13 +52,13 @@ Column {
                 width: slider.availableWidth
                 height: Units.px(4) 
                 radius: Units.px(2)
-                color: Colors.layer01
+                color: Colors.layer03
 
                 Rectangle {
                     width: slider.visualPosition * parent.width
                     height: parent.height
                     radius: parent.radius
-                    color: slider.pressed ? Colors.buttonSecondaryActive : Colors.buttonSecondary
+                    color: slider.pressed ? Colors.buttonPrimary : Colors.layerSelectedInverse
                 }
             }
 
@@ -68,7 +68,7 @@ Column {
                 width: radius * 2 
                 height: radius * 2 
                 radius: Units.px(8)
-                color: slider.pressed ? Colors.buttonSecondaryActive : Colors.buttonSecondary
+                color: slider.pressed ? Colors.buttonPrimary : Colors.layerSelectedInverse
             }
         }
 
