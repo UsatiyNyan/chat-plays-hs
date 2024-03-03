@@ -46,15 +46,15 @@ Item {
         delegate: StackTabDelegate {
             width: listView.width
             controller: root.controller
-            content {
-                height: listView.currentIndex === index ? root.contentHeight : 0
-                source: model.content
-            }
             header {
                 height: root.headerHeight
                 title: model.title
                 state: _getTabHeaderState(listView.currentIndex, index)
                 onClicked: listView.currentIndex = (listView.currentIndex === index ? -1 : index)
+            }
+            content {
+                height: listView.currentIndex === index ? root.contentHeight : 0
+                source: model.content
             }
             function _getTabHeaderState(_currentIndex, _index) {
                 if (_currentIndex === -1 || _currentIndex > _index) {

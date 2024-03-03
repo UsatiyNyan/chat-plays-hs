@@ -1,29 +1,49 @@
 import QtQuick
 
 ListModel {
+    property int votesSum: 300
+    property int votesMax: 100
     ListElement {
-        header: "Hand"
-        alias: "H1: Shiv"
+        group: 'Hand'
+        alias: 'H1'
+        option: 'Shiv'
+        votes: 20
     }
     ListElement {
-        header: "Hand"
-        alias: "H2: Backstab"
+        group: 'Hand'
+        alias: 'H2'
+        option: 'Backstab'
+        votes: 10
     }
     ListElement {
-        header: "Play"
-        alias: "P1: Valeera"
+        group: 'Play'
+        alias: 'P1'
+        option: 'Valeera'
+        votes: 50
     }
     ListElement {
-        header: "Play"
-        alias: "P2: Edwin"
+        group: 'Play'
+        alias: 'P2'
+        option: 'Patches the Pirate'
+        votes: 30
     }
     ListElement {
-        header: "Play"
-        alias: "P3: Patches the Pirate"
+        group: 'Misc'
+        alias: 'M1'
+        option: 'End Turn'
+        votes: 10
     }
     ListElement {
-        header: "Misc"
-        alias: "M1: End Turn"
+        group: 'Misc'
+        alias: 'M2'
+        option: 'Concede'
+        votes: 100
+    }
+    ListElement {
+        group: 'Misc'
+        alias: 'M3'
+        option: 'Emote'
+        votes: 80
     }
 }
 

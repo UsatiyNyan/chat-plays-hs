@@ -6,13 +6,65 @@ import Frontend.Styles
 Item {
     id: root
 
-    property string text
-    property int voteCount
+    property string alias
+    property string option
+    property int votes
+    property int votesMax
+    property int votesSum
 
     height: Units.px(30)
 
+    Rectangle {
+        id: background
+        anchors {
+            fill: parent
+            leftMargin: Units.px(8)
+            rightMargin: Units.px(8)
+        }
+        color: Colors.layer02
+    }
+
+    Rectangle {
+        anchors {
+            top: background.top
+            bottom: background.bottom
+            left: background.left
+        }
+        width: MathExt.safeFraction(votes, votesMax, 0) * background.width
+        color: Colors.tagBackgroundGreen
+    }
+
+    Rectangle {
+        anchors.fill: background
+        border {
+            width: Units.px(1)
+            color: Colors.borderSubtle01
+        }
+        color: 'transparent'
+    }
+
     Text {
-        text: root.text
+        anchors {
+            verticalCenter: background.verticalCenter
+            left: background.left
+            leftMargin: Units.px(8)
+            right: fractionText.left
+        }
+        text: `${alias}: ${option}`
+        color: Colors.textOnColor
+        font.pixelSize: 20
+    }
+
+    Text {
+        id: fractionText
+        anchors {
+            verticalCenter: background.verticalCenter
+            right: background.right
+            rightMargin: Units.px(8)
+        }
+        text: (MathExt.safeFraction(votes, votesSum, 0) * 100.0).toFixed(1) + '%'
+        color: Colors.textOnColor
+        font.pixelSize: 20
     }
 }
 

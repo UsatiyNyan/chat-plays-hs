@@ -11,6 +11,7 @@
     <file>Utils/qmldir</file>
     <file>Utils/Resources.qml</file>
     <file>Utils/Units.qml</file>
+    <file>Utils/MathExt.qml</file>
 
     <file>Styles/qmldir</file>
     <file>Styles/Colors.qml</file>

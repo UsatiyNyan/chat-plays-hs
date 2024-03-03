@@ -2,3 +2,4 @@ module Frontend.Utils
 
 singleton Units 1.0 Units.qml
 singleton Resources 1.0 Resources.qml
+singleton MathExt 1.0 MathExt.qml

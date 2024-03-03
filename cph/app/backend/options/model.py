@@ -7,10 +7,11 @@ from PySide6.QtCore import (
     QAbstractListModel,
     QModelIndex,
     QPersistentModelIndex,
-    QByteArray
+    QByteArray,
+    Property,
+    Signal,
 )
 
-from cph.utils.math import safe_fraction
 from cph.gamestate.model import GameOption
 from cph.vote.model import VoteOption
 
@@ -20,19 +21,24 @@ class DisplayOption:
     option: str
     group: str
     alias: str
-    vote_fraction: float  # 0.0 to 1.0
+    votes: int
 
 
 class DisplayOptionsModel(QAbstractListModel):
+    votesSumChanged = Signal()
+    votesMaxChanged = Signal()
+
     class Roles(IntEnum):
         Option = Qt.ItemDataRole.UserRole
         Group = auto()
         Alias = auto()
-        VoteFraction = auto()
+        Votes = auto()
 
     def __init__(self, parent: QObject | None = None):
         super().__init__(parent)
         self._display_options: list[DisplayOption] = []
+        self._votes_sum = 0
+        self._votes_max = 0
 
     def rowCount(self, parent: QModelIndex | QPersistentModelIndex = QModelIndex()) -> int:
         _ = parent
@@ -43,7 +49,7 @@ class DisplayOptionsModel(QAbstractListModel):
             self.Roles.Option: QByteArray(b'option'),
             self.Roles.Group: QByteArray(b'group'),
             self.Roles.Alias: QByteArray(b'alias'),
-            self.Roles.VoteFraction: QByteArray(b'vote_fraction'),
+            self.Roles.Votes: QByteArray(b'votes'),
         }
 
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.UserRole) -> str | float | None:
@@ -58,10 +64,32 @@ class DisplayOptionsModel(QAbstractListModel):
                 return display_option.group
             case self.Roles.Alias:
                 return display_option.alias
-            case self.Roles.VoteFraction:
-                return display_option.vote_fraction
+            case self.Roles.Votes:
+                return display_option.votes
             case _:
                 return None
+
+    @Property(int, notify=votesSumChanged)
+    def votesSum(self) -> int:
+        return self._votes_sum
+
+    @votesSum.setter
+    def votesSum(self, value: int):
+        if self._votes_sum == value:
+            return
+        self._votes_sum = value
+        self.votesSumChanged.emit()
+
+    @Property(int, notify=votesMaxChanged)
+    def votesMax(self) -> int:
+        return self._votes_max
+
+    @votesMax.setter
+    def votesMax(self, value: int):
+        if self._votes_max == value:
+            return
+        self._votes_max = value
+        self.votesMaxChanged.emit()
 
     def set_options(self, game_options: list[GameOption], vote_options: list[VoteOption]):
         assert (len(game_options) == len(vote_options))
@@ -75,7 +103,7 @@ class DisplayOptionsModel(QAbstractListModel):
                 option=get_option_verified(game_option, vote_option),
                 group=game_option.group,
                 alias=vote_option.alias,
-                vote_fraction=0.0,
+                votes=0,
             )
             for game_option, vote_option in zip(game_options, vote_options)
         ]
@@ -85,11 +113,12 @@ class DisplayOptionsModel(QAbstractListModel):
         self.endResetModel()
 
     def update_votes(self, vote_options: list[VoteOption]):
-        votes_max = max(vote_option.votes for vote_option in vote_options)
         for display_option, vote_option in zip(self._display_options, vote_options):
-            display_option.vote_fraction = safe_fraction(
-                vote_option.votes, votes_max)
+            display_option.votes = vote_option.votes
 
         if (row_count := self.rowCount()) > 0:
-            self.dataChanged.emit(self.index(0), self.index(
-                row_count - 1), [self.Roles.VoteFraction])
+            self.dataChanged.emit(
+                self.index(0), self.index(row_count - 1), [self.Roles.Votes])
+
+        self.votesMax = max(vote_option.votes for vote_option in vote_options)
+        self.votesSum = sum(vote_option.votes for vote_option in vote_options)

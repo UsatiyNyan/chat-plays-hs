@@ -22,11 +22,17 @@ Rectangle {
 
     Rectangle {
         anchors.fill: parent
-        color: state === StackTabHeader.State.Selected
-        ? Colors.backgroundSelected
-        : mouseArea.containsMouse 
-        ? Colors.backgroundHover 
-        : 'transparent' 
+        color: mouseArea.containsMouse ? Colors.backgroundHover : 'transparent' 
+    }
+
+    Rectangle {
+        anchors {
+            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
+        }
+        height: Units.px(1)
+        color: Colors.borderSubtle01
     }
 
     Text {

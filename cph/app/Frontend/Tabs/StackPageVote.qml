@@ -10,7 +10,7 @@ Rectangle {
     // inherited from outer Loader:
     // required property var controller
 
-    color: Colors.layer01
+    color: Colors.background
     clip: true
 
     ListView {
@@ -27,11 +27,15 @@ Rectangle {
 
         delegate: VoteDelegate {
             width: listView.width
-            text: model.alias
+            alias: model.alias
+            option: model.option
+            votes: model.votes
+            votesMax: controller.voteModel.votesMax
+            votesSum: controller.voteModel.votesSum
         }
         
         section {
-            property: "header"
+            property: 'group'
             criteria: ViewSection.FullString
             delegate: VoteHeader {
                 width: listView.width
