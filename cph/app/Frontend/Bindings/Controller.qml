@@ -1,7 +1,9 @@
 import QtQuick
 
 Item {
+    // --- interface ---
     property ListModel voteModel: VoteModel {}
+    property bool voteEmotes: true
     property int voteSecondsLeft: 10
     property int voteSecondsTotal: 10
     property int voteWinnerIndex: -1
@@ -9,6 +11,15 @@ Item {
 
     function onVoteButtonClicked() {
         voteWinnerIndex = voteWinnerIndex === -1 ? 5 : -1
+    }
+
+    // --- debug ---
+    onVoteEmotesChanged: {
+        console.log('voteEmotes', voteEmotes)
+    }
+
+    onVoteSecondsTotalChanged: {
+        console.log('voteSecondsTotal', voteSecondsTotal)
     }
 
     Timer {
