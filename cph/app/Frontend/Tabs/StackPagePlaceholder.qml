@@ -5,7 +5,7 @@ import Frontend.Styles
 Rectangle {
     id: root
 
-    color: Colors.layer02
+    color: Colors.background
 
     Text {
         clip: true

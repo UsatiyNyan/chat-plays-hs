@@ -22,6 +22,6 @@
     <file>Tabs/StackTabView.qml</file>
     <file>Tabs/StackTabDelegate.qml</file>
     <file>Tabs/StackTabHeader.qml</file>
-    <file>Tabs/StackTabPlaceholder.qml</file>
+    <file>Tabs/StackPagePlaceholder.qml</file>
 </qresource>
 </RCC>

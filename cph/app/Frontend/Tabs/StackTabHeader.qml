@@ -19,20 +19,10 @@ Rectangle {
     signal clicked()
 
     color: state === StackTabHeader.State.Selected
-        ? Colors.layer01Selected
+        ? Colors.backgroundSelected
         : mouseArea.containsMouse 
-        ? Colors.layer01Hover 
-        : Colors.layer01
-
-    Rectangle {
-        anchors {
-            top: parent.top
-            left: parent.left
-            right: parent.right
-        }
-        height: Units.px(1)
-        color: Colors.borderSubtle01
-    }
+        ? Colors.backgroundHover 
+        : Colors.background
 
     Text {
         anchors.centerIn: parent

@@ -1,6 +1,7 @@
 import QtQuick
 
 import Frontend.Styles
+import Frontend.Utils
 
 Item {
     id: root
@@ -28,7 +29,7 @@ Item {
             left: parent.left
             right: parent.right
         }
-        color: Colors.buttonSecondary
+        color: Colors.layer01
 
         Behavior on height {
             PropertyAnimation {
@@ -36,6 +37,16 @@ Item {
                 easing.type: Easing.InOutQuad
             }
         }
+    }
+
+    Rectangle {
+        anchors {
+            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
+        }
+        height: Units.px(1)
+        color: Colors.borderSubtle01
     }
 }
 

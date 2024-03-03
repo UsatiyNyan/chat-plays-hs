@@ -11,7 +11,7 @@ Item {
     readonly property int contentHeight: height - (headerHeight * listView.model.count) 
     readonly property bool isExpanded: listView.currentIndex !== -1
 
-    StackTabPlaceholder {
+    StackPagePlaceholder {
         anchors {
             left: parent.left
             right: parent.right
