@@ -21,7 +21,7 @@ Item {
         }
     }
 
-    Rectangle {
+    Loader {
         id: content
 
         anchors {
@@ -29,14 +29,13 @@ Item {
             left: parent.left
             right: parent.right
         }
-        color: Colors.layer01
-
         Behavior on height {
             PropertyAnimation {
                 duration: 200
                 easing.type: Easing.InOutQuad
             }
         }
+        active: height > 0
     }
 
     Rectangle {

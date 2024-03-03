@@ -34,15 +34,11 @@ Item {
         model: ListModel {
             ListElement {
                 title: "settings"
-                // content: TabSettings {}
+                content: "qrc:/Frontend/Tabs/StackPageSettings.qml"
             }
             ListElement {
                 title: "vote"
-                // content: TabVote {}
-            }
-            ListElement {
-                title: "connect"
-                // content: TabConnect {}
+                content: "qrc:/Frontend/Tabs/StackPageVote.qml"
             }
         }
 
@@ -50,6 +46,7 @@ Item {
             width: listView.width
             content {
                 height: listView.currentIndex === index ? root.contentHeight : 0
+                source: model.content 
             }
             header {
                 height: root.headerHeight

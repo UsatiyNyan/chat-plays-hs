@@ -23,5 +23,7 @@
     <file>Tabs/StackTabDelegate.qml</file>
     <file>Tabs/StackTabHeader.qml</file>
     <file>Tabs/StackPagePlaceholder.qml</file>
+    <file>Tabs/StackPageSettings.qml</file>
+    <file>Tabs/StackPageVote.qml</file>
 </qresource>
 </RCC>
