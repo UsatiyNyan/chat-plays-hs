@@ -34,11 +34,11 @@ Item {
         model: ListModel {
             ListElement {
                 title: "settings"
-                content: "qrc:/Frontend/Tabs/StackPageSettings.qml"
+                content: "StackPageSettings.qml"
             }
             ListElement {
                 title: "vote"
-                content: "qrc:/Frontend/Tabs/StackPageVote.qml"
+                content: "StackPageVote.qml"
             }
         }
 

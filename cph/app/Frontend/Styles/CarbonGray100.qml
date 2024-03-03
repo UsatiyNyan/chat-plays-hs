@@ -26,6 +26,11 @@ QtObject {
     readonly property color red60Hover: "#ba1b23"
     readonly property color red80: "#750e13"
 
+    readonly property color green20: "#a7f0ba"
+    readonly property color green50: "#24a148"
+    readonly property color green70: "#0e6027"
+    readonly property color green70Hover: "#11742f"
+
     readonly property color blue50: "#4589ff"
     readonly property color blue60: "#0f62fe"
     readonly property color blue60Hover: "#0353e9"
@@ -137,4 +142,10 @@ QtObject {
 
     readonly property color buttonSeparator: gray100
     readonly property color buttonDisabled: gray70
+
+    // tag
+    readonly property color tagBackgroundGreen: green70
+    readonly property color tagColorGreen: green20
+    readonly property color tagHoverGreen: green70Hover
+    readonly property color tagBorderGreen: green50
 }
