@@ -11,6 +11,7 @@ Item {
     property alias header: header
 
     height: header.height + content.height
+    clip: true
 
     StackTabHeader {
         id: header

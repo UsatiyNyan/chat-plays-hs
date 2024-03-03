@@ -4,3 +4,7 @@ ResizeButton 1.0 ResizeButton.qml
 CloseButton 1.0 CloseButton.qml
 WindowDragArea 1.0 WindowDragArea.qml
 WindowControlButton 1.0 WindowControlButton.qml
+
+VoteHeader 1.0 VoteHeader.qml
+VoteDelegate 1.0 VoteDelegate.qml
+VoteButton 1.0 VoteButton.qml

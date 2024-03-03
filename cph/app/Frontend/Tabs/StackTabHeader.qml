@@ -18,11 +18,16 @@ Rectangle {
     property int state
     signal clicked()
 
-    color: state === StackTabHeader.State.Selected
+    color: Colors.background
+
+    Rectangle {
+        anchors.fill: parent
+        color: state === StackTabHeader.State.Selected
         ? Colors.backgroundSelected
         : mouseArea.containsMouse 
         ? Colors.backgroundHover 
-        : Colors.background
+        : 'transparent' 
+    }
 
     Text {
         anchors.centerIn: parent

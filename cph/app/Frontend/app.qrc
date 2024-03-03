@@ -21,6 +21,9 @@
     <file>Components/ResizeButton.qml</file>
     <file>Components/CloseButton.qml</file>
     <file>Components/WindowControlButton.qml</file>
+    <file>Components/VoteHeader.qml</file>
+    <file>Components/VoteDelegate.qml</file>
+    <file>Components/VoteButton.qml</file>
 
     <file>Tabs/qmldir</file>
     <file>Tabs/StackTabView.qml</file>
