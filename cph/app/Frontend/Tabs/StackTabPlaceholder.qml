@@ -14,6 +14,7 @@ Rectangle {
         verticalAlignment: Text.AlignVCenter
         color: Colors.textSecondary
         font.pixelSize: 20
+        wrapMode: Text.WordWrap
         text:
 `To vote type: "!vote <options>"
 e.g.: "!vote H2 P2 E1"
@@ -21,8 +22,7 @@ e.g.: "!vote H2 P2 E1"
 You can only vote for up to 3 candidates!
 The lesser you choose the heftier the vote!
 
-Command is case insensitive, 
-but be careful with spaces!
+Command is case insensitive, but be careful with spaces!
 
 Have Fun!`
     }

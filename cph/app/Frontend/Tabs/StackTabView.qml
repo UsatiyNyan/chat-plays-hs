@@ -30,7 +30,7 @@ Item {
             right: parent.right
         }
         currentIndex: -1
-
+        interactive: false
         model: ListModel {
             ListElement {
                 title: "settings"

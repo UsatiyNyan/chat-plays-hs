@@ -24,6 +24,16 @@ Rectangle {
         ? Colors.layer01Hover 
         : Colors.layer01
 
+    Rectangle {
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+        }
+        height: Units.px(1)
+        color: Colors.borderSubtle01
+    }
+
     Text {
         anchors.centerIn: parent
         text: root.title
@@ -31,7 +41,7 @@ Rectangle {
         font.pixelSize: 24
     }
 
-    // use Button, since Image doesn't support color field
+    // use Button for icon, since Image doesn't support color field
     Button {
         anchors {
             left: root.left
