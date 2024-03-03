@@ -57,5 +57,6 @@ Rectangle {
         secondsTotal: controller.voteSecondsTotal
         inProgress: controller.voteWinnerIndex === -1
         onClicked: controller.onVoteButtonClicked()
+        visible: inProgress || controller.voteWinnerHasCandidates
     }
 }
