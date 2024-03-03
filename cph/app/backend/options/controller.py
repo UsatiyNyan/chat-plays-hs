@@ -1,27 +1,36 @@
-from PySide6.QtCore import QObject, Property, Signal, Slot
+from enum import IntEnum, auto
+
+from PySide6.QtCore import QObject, Property, Signal, Slot, QEnum
 from PySide6.QtQml import qmlRegisterType
 
 from cph.app.backend.options.model import DisplayOptionsModel
 
 
+class VoteState(IntEnum):
+    Ready = auto()
+    InProgress = auto()
+    Finished = auto()
+
+
 class DisplayOptionsController(QObject):
-    # Signals for property changes
+    QEnum(VoteState)
+
     voteSecondsLeftChanged = Signal()
     voteEmotesChanged = Signal()
     voteSecondsTotalChanged = Signal()
     voteWinnerIndexChanged = Signal()
-    voteWinnerHasCandidatesChanged = Signal()
+    voteStateChanged = Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, on_vote_button_clicked, parent=None):
         super().__init__(parent)
         self._voteSecondsLeft = 10
         self._voteEmotes = True
         self._voteSecondsTotal = 10
         self._voteWinnerIndex = -1
-        self._voteWinnerHasCandidates = True
+        self._voteState = VoteState.Ready
         self._voteModel = DisplayOptionsModel()
+        self._onVoteButtonClicked = on_vote_button_clicked
 
-    # Property getters and setters
     @Property(DisplayOptionsModel, constant=True)
     def voteModel(self):
         return self._voteModel
@@ -66,20 +75,20 @@ class DisplayOptionsController(QObject):
             self._voteWinnerIndex = value
             self.voteWinnerIndexChanged.emit()
 
-    @Property(bool, notify=voteWinnerHasCandidatesChanged)
-    def voteWinnerHasCandidates(self):
-        return self._voteWinnerHasCandidates
+    @Property(bool, notify=voteStateChanged)
+    def voteState(self):
+        return self._voteState
 
-    @voteWinnerHasCandidates.setter
-    def voteWinnerHasCandidates(self, value):
-        if self._voteWinnerHasCandidates != value:
-            self._voteWinnerHasCandidates = value
-            self.voteWinnerHasCandidatesChanged.emit()
+    @voteState.setter
+    def voteState(self, value):
+        if self._voteState != value:
+            self._voteState = value
+            self.voteStateChanged.emit()
 
     @Slot()
     def onVoteButtonClicked(self):
-        print('Vote button clicked')
-        # TODO
+        self._onVoteButtonClicked()
+        self.voteState = VoteState.Finished
 
 
 qmlRegisterType(DisplayOptionsController,

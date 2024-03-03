@@ -2,6 +2,7 @@ import QtQuick
 
 import Frontend.Utils
 import Frontend.Styles
+import Frontend.Bindings
 
 Item {
     id: root
@@ -9,8 +10,11 @@ Item {
     property int secondsLeft
     property int secondsTotal
     property bool inProgress
+    property int state
     signal clicked
 
+    visible: state !== VoteController.VoteState.Finished
+    onStateChanged: console.log('state', state)
     height: Units.px(35)
 
     Rectangle {
