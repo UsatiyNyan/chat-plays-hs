@@ -18,14 +18,14 @@ from cph.vote.model import VoteOption
 
 
 @dataclass
-class DisplayOption:
+class VoteElement:
     option: str
     group: str
     alias: str
     votes: int
 
 
-class DisplayOptionsModel(QAbstractListModel):
+class VoteModel(QAbstractListModel):
     votesSumChanged = Signal()
     votesMaxChanged = Signal()
 
@@ -37,13 +37,13 @@ class DisplayOptionsModel(QAbstractListModel):
 
     def __init__(self, parent: QObject | None = None):
         super().__init__(parent)
-        self._display_options: list[DisplayOption] = []
+        self._vote_elements: list[VoteElement] = []
         self._votes_sum = 0
         self._votes_max = 0
 
     def rowCount(self, parent: QModelIndex | QPersistentModelIndex = QModelIndex()) -> int:
         _ = parent
-        return len(self._display_options)
+        return len(self._vote_elements)
 
     def roleNames(self) -> dict[int, QByteArray]:
         return {
@@ -57,16 +57,16 @@ class DisplayOptionsModel(QAbstractListModel):
         if index.row() < 0 or index.row() >= self.rowCount():
             return None
 
-        display_option = self._display_options[index.row()]
+        vote_element = self._vote_elements[index.row()]
         match role:
             case self.Roles.Option:
-                return display_option.option
+                return vote_element.option
             case self.Roles.Group:
-                return display_option.group
+                return vote_element.group
             case self.Roles.Alias:
-                return display_option.alias
+                return vote_element.alias
             case self.Roles.Votes:
-                return display_option.votes
+                return vote_element.votes
             case _:
                 return None
 
@@ -87,10 +87,9 @@ class DisplayOptionsModel(QAbstractListModel):
 
     @votesMax.setter
     def votesMax(self, value: int):
-        if self._votes_max == value:
-            return
-        self._votes_max = value
-        self.votesMaxChanged.emit()
+        if self._votes_max != value:
+            self._votes_max = value
+            self.votesMaxChanged.emit()
 
     def set_options(self, game_options: list[GameOption], vote_options: list[VoteOption]):
         assert (len(game_options) == len(vote_options))
@@ -99,8 +98,8 @@ class DisplayOptionsModel(QAbstractListModel):
             assert (game_option.option == vote_option.option)
             return game_option.option
 
-        new_display_options = [
-            DisplayOption(
+        new_vote_elements = [
+            VoteElement(
                 option=get_option_verified(game_option, vote_option),
                 group=game_option.group,
                 alias=vote_option.alias,
@@ -110,12 +109,12 @@ class DisplayOptionsModel(QAbstractListModel):
         ]
 
         self.beginResetModel()
-        self._display_options = new_display_options
+        self._vote_elements = new_vote_elements
         self.endResetModel()
 
     def update_votes(self, vote_options: list[VoteOption]):
-        for display_option, vote_option in zip(self._display_options, vote_options):
-            display_option.votes = vote_option.votes
+        for vote_element, vote_option in zip(self._vote_elements, vote_options):
+            vote_element.votes = vote_option.votes
 
         if (row_count := self.rowCount()) > 0:
             self.dataChanged.emit(
@@ -125,4 +124,4 @@ class DisplayOptionsModel(QAbstractListModel):
         self.votesSum = sum(vote_option.votes for vote_option in vote_options)
 
 
-qmlRegisterType(DisplayOptionsModel, 'Frontend.Bindings', 1, 0, 'VoteModel')
+qmlRegisterType(VoteModel, 'Frontend.Bindings', 1, 0, 'VoteModel')

@@ -1,16 +1,15 @@
 from PySide6.QtCore import QObject, Property
 from PySide6.QtQml import qmlRegisterType
 
-from cph.app.backend.options.controller import DisplayOptionsController
+from .vote.controller import VoteController
 
 
 class Controller(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self._vote_controller = DisplayOptionsController(
-            self.on_vote_button_clicked)
+        self._vote_controller = VoteController(self.on_vote_button_clicked)
 
-    @Property(DisplayOptionsController, constant=True)
+    @Property(VoteController, constant=True)
     def voteController(self):
         return self._vote_controller
 

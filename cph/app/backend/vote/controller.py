@@ -3,7 +3,7 @@ from enum import IntEnum, auto
 from PySide6.QtCore import QObject, Property, Signal, Slot, QEnum
 from PySide6.QtQml import qmlRegisterType
 
-from cph.app.backend.options.model import DisplayOptionsModel
+from .model import VoteModel
 
 
 class VoteState(IntEnum):
@@ -12,7 +12,7 @@ class VoteState(IntEnum):
     Finished = auto()
 
 
-class DisplayOptionsController(QObject):
+class VoteController(QObject):
     QEnum(VoteState)
 
     voteSecondsLeftChanged = Signal()
@@ -28,10 +28,10 @@ class DisplayOptionsController(QObject):
         self._voteSecondsTotal = 10
         self._voteWinnerIndex = -1
         self._voteState = VoteState.Ready
-        self._voteModel = DisplayOptionsModel()
+        self._voteModel = VoteModel()
         self._onVoteButtonClicked = on_vote_button_clicked
 
-    @Property(DisplayOptionsModel, constant=True)
+    @Property(VoteModel, constant=True)
     def voteModel(self):
         return self._voteModel
 
@@ -75,7 +75,7 @@ class DisplayOptionsController(QObject):
             self._voteWinnerIndex = value
             self.voteWinnerIndexChanged.emit()
 
-    @Property(bool, notify=voteStateChanged)
+    @Property(int, notify=voteStateChanged)
     def voteState(self):
         return self._voteState
 
@@ -88,8 +88,6 @@ class DisplayOptionsController(QObject):
     @Slot()
     def onVoteButtonClicked(self):
         self._onVoteButtonClicked()
-        self.voteState = VoteState.Finished
 
 
-qmlRegisterType(DisplayOptionsController,
-                'Frontend.Bindings', 1, 0, 'VoteController')
+qmlRegisterType(VoteController, 'Frontend.Bindings', 1, 0, 'VoteController')

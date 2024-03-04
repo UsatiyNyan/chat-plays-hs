@@ -14,7 +14,6 @@ Item {
     signal clicked
 
     visible: state !== VoteController.VoteState.Finished
-    onStateChanged: console.log('state', state)
     height: Units.px(35)
 
     Rectangle {
