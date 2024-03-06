@@ -13,7 +13,7 @@ from PySide6.QtCore import (
 )
 from PySide6.QtQml import qmlRegisterType
 
-from cph.gamestate.model import GameOption
+from cph.game.model import GameOption
 from cph.vote.model import VoteOption
 
 
