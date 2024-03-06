@@ -25,12 +25,12 @@ ApplicationWindow {
         controller: Controller {}
     }
 
-    CloseButton {
+    WindowCloseButton {
         anchors { right: parent.right; top: parent.top }
         target: root
     }
 
-    ResizeButton {
+    WindowResizeButton {
         anchors { left: parent.left; bottom: parent.bottom }
         target: root
         edge: Qt.BottomEdge | Qt.LeftEdge

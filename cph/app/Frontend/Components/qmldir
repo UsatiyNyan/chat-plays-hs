@@ -1,9 +1,11 @@
 module Frontend.Components
 
-ResizeButton 1.0 ResizeButton.qml
-CloseButton 1.0 CloseButton.qml
+WindowResizeButton 1.0 WindowResizeButton.qml
+WindowCloseButton 1.0 WindowCloseButton.qml
 WindowDragArea 1.0 WindowDragArea.qml
 WindowControlButton 1.0 WindowControlButton.qml
+
+PrimaryButton 1.0 PrimaryButton.qml
 
 SettingsSwitch 1.0 SettingsSwitch.qml
 SettingsSlider 1.0 SettingsSlider.qml

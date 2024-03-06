@@ -4,19 +4,22 @@ import Frontend.Utils
 import Frontend.Styles
 import Frontend.Bindings
 
-Item {
+PrimaryButton {
     id: root
 
     property int secondsLeft
     property int secondsTotal
     property bool inProgress
     property int state
-    signal clicked
 
     visible: state !== VoteController.VoteState.Finished
-    height: Units.px(35)
+    text: !inProgress 
+    ? 'Next vote'
+    : secondsTotal > 0 
+    ? `Vote ends in ${secondsLeft} s` 
+    : 'End vote' 
 
-    Rectangle {
+    background: Rectangle {
         anchors {
             top: parent.top
             bottom: parent.bottom
@@ -24,31 +27,6 @@ Item {
         }
         width: parent.width * (secondsTotal === 0 ? 1 : secondsLeft / secondsTotal)
         Behavior on width { NumberAnimation { duration: 1000 } }
-        color: mouseArea.pressed
-        ? Colors.buttonPrimaryActive
-        : mouseArea.containsMouse
-        ? Colors.buttonPrimaryHover
-        : Colors.buttonPrimary
-    }
-
-    Text {
-        anchors.fill: parent
-        horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
-        color: Colors.textOnColor
-        font.pixelSize: 20
-
-        text: !inProgress 
-        ? 'Next vote'
-        : secondsTotal > 0 
-        ? `Vote ends in ${secondsLeft} s` 
-        : 'End vote' 
-    }
-
-    MouseArea {
-        id: mouseArea
-        anchors.fill: parent
-        hoverEnabled: true
-        onClicked: root.clicked()
+        color: root.backgroundColor
     }
 }

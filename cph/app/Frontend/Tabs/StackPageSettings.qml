@@ -10,6 +10,7 @@ Rectangle {
     // inherited from outer Loader:
     // required property var controller
     readonly property var voteController: controller.voteController
+    readonly property var gameController: controller.gameController
 
     clip: true
     color: Colors.background
@@ -47,6 +48,16 @@ Rectangle {
 
             value: { value = voteController.voteSecondsTotal }
             onValueChanged: { voteController.voteSecondsTotal = value }
+        }
+
+        PrimaryButton {
+            id: enablePowerLogButton
+
+            enabled: !gameController.isPowerLogEnabled
+            width: parent.width
+
+            text: enabled ? 'Enable Power Log' : 'Power Log is enabled'
+            onClicked: gameController.enablePowerLog()
         }
     }
 }

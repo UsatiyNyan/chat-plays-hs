@@ -3,3 +3,4 @@ module Frontend.Bindings
 Controller 1.0 Controller.qml
 VoteController 1.0 VoteController.qml
 VoteModel 1.0 VoteModel.qml
+GameController 1.0 GameController.qml

@@ -8,6 +8,7 @@
     <file>Bindings/Controller.qml</file>
     <file>Bindings/VoteController.qml</file>
     <file>Bindings/VoteModel.qml</file>
+    <file>Bindings/GameController.qml</file>
 
     <file>Utils/qmldir</file>
     <file>Utils/Resources.qml</file>
@@ -20,9 +21,10 @@
     
     <file>Components/qmldir</file>
     <file>Components/WindowDragArea.qml</file>
-    <file>Components/ResizeButton.qml</file>
-    <file>Components/CloseButton.qml</file>
+    <file>Components/WindowResizeButton.qml</file>
+    <file>Components/WindowCloseButton.qml</file>
     <file>Components/WindowControlButton.qml</file>
+    <file>Components/PrimaryButton.qml</file>
     <file>Components/SettingsSwitch.qml</file>
     <file>Components/SettingsSlider.qml</file>
     <file>Components/VoteHeader.qml</file>
