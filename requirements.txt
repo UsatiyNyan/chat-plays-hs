@@ -1,3 +1,4 @@
+setuptools
 pyside6
 hslog
 toml
