@@ -212,6 +212,5 @@ def handle_packets(parser: hslog.LogParser,
 
     for packet in current_game.packets[packet_offset:]:
         exporter.export_packet(packet)
-    exporter.flush()
 
     return exporter, len(current_game.packets)
