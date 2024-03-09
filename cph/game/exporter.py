@@ -8,13 +8,17 @@ import hslog.export
 import hslog.exceptions
 import hslog.parser
 
+from cph.game.state import GameState
+
 
 class GameStateExporter(hslog.export.BaseExporter):
     def __init__(self,
                  manager: hslog.player.PlayerManager,
+                 state: GameState,
                  logger: logging.Logger):
         super().__init__(packet_tree=None)  # export() is not used
         self.manager = manager
+        self.state = state
         self.logger = logger
         self.game: hearthstone.entities.Game | None = None
 
@@ -27,8 +31,14 @@ class GameStateExporter(hslog.export.BaseExporter):
         except hslog.exceptions.MissingPlayerData:
             return None
 
+    def _prepare_cards(self, entity_ids: t.Iterable[int]) -> t.Iterable[hearthstone.entities.Card]:
+        maybe_entities = map(self._find_entity, entity_ids)
+        entities = filter(lambda x: x is not None, maybe_entities)
+        return map(lambda x: t.cast(hearthstone.entities.Card, x), entities)
+
     def handle_create_game(self, packet: hslog.packets.CreateGame):
         self.logger.debug(f'create game: {packet.entity=}')
+        self.state.clear()
         self.game = hearthstone.entities.Game(packet.entity)
         self.game.create(packet.tags)
         for player_packet in packet.players:
@@ -60,6 +70,7 @@ class GameStateExporter(hslog.export.BaseExporter):
     def handle_block(self, packet: hslog.packets.Block):
         if packet.type == hearthstone.enums.BlockType.GAME_RESET and self.game is not None:
             self.logger.debug('game reset')
+            self.state.clear()
             self.game.reset()
         super().handle_block(packet)
 
@@ -78,9 +89,6 @@ class GameStateExporter(hslog.export.BaseExporter):
         self.game.register_entity(entity)
 
     def handle_hide_entity(self, packet: hslog.packets.HideEntity):
-        if self.game is None:
-            self.logger.warning('hide_entity: no game')
-            return
         entity = self._find_entity(packet.entity)
         if entity is None:
             self.logger.warning('hide_entity: entity not found')
@@ -89,9 +97,6 @@ class GameStateExporter(hslog.export.BaseExporter):
         card.hide()
 
     def handle_show_entity(self, packet: hslog.packets.ShowEntity):
-        if self.game is None:
-            self.logger.warning('show_entity: no game')
-            return
         entity = self._find_entity(packet.entity)
         if entity is None:
             self.logger.warning('show_entity: entity not found')
@@ -100,9 +105,6 @@ class GameStateExporter(hslog.export.BaseExporter):
         card.reveal(packet.card_id, dict(packet.tags))
 
     def handle_change_entity(self, packet: hslog.packets.ChangeEntity):
-        if self.game is None:
-            self.logger.warning('change_entity: no game')
-            return
         entity = self._find_entity(packet.entity)
         if entity is None:
             self.logger.warning('change_entity: entity not found')
@@ -116,9 +118,6 @@ class GameStateExporter(hslog.export.BaseExporter):
         card.change(packet.card_id, dict(packet.tags))
 
     def handle_tag_change(self, packet: hslog.packets.TagChange):
-        if self.game is None:
-            self.logger.warning('tag_change: no game')
-            return
         entity_id = hslog.player.coerce_to_entity_id(packet.entity)
         entity = self._find_entity(int(entity_id))
         if entity is None:
@@ -128,51 +127,48 @@ class GameStateExporter(hslog.export.BaseExporter):
         card.tag_change(packet.tag, packet.value)
 
     def handle_metadata(self, packet: hslog.packets.MetaData):
-        pass
+        super().handle_metadata(packet)
 
     def handle_choices(self, packet: hslog.packets.Choices):
-        entity_id = hslog.player.coerce_to_entity_id(packet.entity)
-        player_entity = self.manager.get_player_by_entity_id(int(entity_id))
-        player_name = player_entity.name if player_entity is not None else None
-        first_player = self.manager.first_player
-        is_first_player = first_player is not None and first_player.entity_id == entity_id
-        self.logger.debug(f'choices: name: {player_name} is first: {is_first_player}')
-        for choice in packet.choices:
-            entity = self._find_entity(choice)
-            self.logger.debug(f'choice: {entity}')
-            # TODO: handle COIN <- second player
-            # TODO: handle mulligan -> friendly player
+        card_choices = self._prepare_cards(packet.choices)
+        known_card_choices = \
+            list(filter(lambda x: x.card_id is not None, card_choices))
 
-    def handle_send_choices(self, packet: hslog.packets.SendChoices):
-        pass
-
-    def handle_chosen_entities(self, packet: hslog.packets.ChosenEntities):
-        pass
-
-    def handle_options(self, packet: hslog.packets.Options):
-        for option in packet.options:
-            self.export_packet(option)
-
-    def handle_option(self, packet: hslog.packets.Option):
-        if self.game is None:
-            self.logger.warning('option: no game')
+        if len(known_card_choices) == 0:
+            self.logger.debug('choices: none')
             return
 
-        entity = None if packet.entity is None \
-            else self._find_entity(packet.entity)
-        self.logger.debug(f'option: {entity} error={packet.error}')
+        if packet.type == hearthstone.enums.ChoiceType.MULLIGAN:
+            self.logger.debug(f'choices: friendly={packet.player}')
 
-        for target in packet.options:
-            target_entity = None if target.entity is None \
-                else self._find_entity(target.entity)
-            self.logger.debug(
-                f'\ttarget: {target_entity} error={target.error}')
+        self.state.set_choices(known_card_choices, packet.max)
+
+    def handle_options(self, packet: hslog.packets.Options):
+        def filter_options(options: t.Iterable[hslog.packets.Option]):
+            return filter(lambda x: x.entity is not None and x.error is None, options)
+
+        def prepare_options(options: t.Iterable[hslog.packets.Option]):
+            return self._prepare_cards(x.entity for x in options)
+
+        available_options = list(filter_options(packet.options))
+        available_cards = list(prepare_options(available_options))
+        available_targets = \
+            [list(prepare_options(filter_options(available_option.options)))
+             for available_option in available_options]
+
+        self.state.set_options(available_cards, available_targets)
+
+    def handle_option(self, packet: hslog.packets.Option):
+        self.logger.warning('option: {packet.entity} got thru somehow')
+        return
 
     def handle_send_option(self, packet: hslog.packets.SendOption):
-        pass
+        super().handle_send_option(packet)
+        self.state.clear()
 
     def handle_reset_game(self, packet: hslog.packets.ResetGame):
-        pass
+        super().handle_reset_game(packet)
+        self.state.clear()
 
     def handle_sub_spell(self, packet: hslog.packets.SubSpell):
         super().handle_sub_spell(packet)
@@ -180,13 +176,13 @@ class GameStateExporter(hslog.export.BaseExporter):
     def handle_cached_tag_for_dormant_change(
             self, packet: hslog.packets.CachedTagForDormantChange
     ):
-        pass
+        super().handle_cached_tag_for_dormant_change(packet)
 
     def handle_vo_spell(self, packet: hslog.packets.VOSpell):
-        pass
+        super().handle_vo_spell(packet)
 
     def handle_shuffle_deck(self, packet: hslog.packets.ShuffleDeck):
-        pass
+        super().handle_shuffle_deck(packet)
 
 
 def extract_last_game(parser: hslog.LogParser) -> t.Tuple[hslog.packets.PacketTree | None, bool]:
@@ -200,6 +196,7 @@ def extract_last_game(parser: hslog.LogParser) -> t.Tuple[hslog.packets.PacketTr
 
 
 def handle_packets(parser: hslog.LogParser,
+                   state: GameState,
                    logger: logging.Logger,
                    exporter: GameStateExporter | None,
                    packet_offset: int) \
@@ -210,7 +207,7 @@ def handle_packets(parser: hslog.LogParser,
 
     exporter = exporter \
         if not is_new_game and exporter is not None\
-        else GameStateExporter(parser.player_manager, logger)
+        else GameStateExporter(parser.player_manager, state, logger)
     packet_offset = packet_offset if not is_new_game else 0
 
     for packet in current_game.packets[packet_offset:]:

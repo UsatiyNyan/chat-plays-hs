@@ -5,7 +5,7 @@ from pathlib import Path
 from hslog import LogParser
 
 from cph.utils.logging import make_logger
-from cph.game import power_log, exporter
+from cph.game import power_log, exporter, state
 
 
 def main():
@@ -18,6 +18,8 @@ def main():
     game_state_exporter: exporter.GameStateExporter | None = None
     packet_offset = 0
 
+    game_state = state.GameState(logger)
+
     def read_line(line: str) -> None:
         parser.read_line(line)
 
@@ -26,7 +28,7 @@ def main():
             power_log.handle_lines_once(read_line, power_log_path, offset)
 
         game_state_exporter, packet_offset = exporter.handle_packets(
-            parser, logger, game_state_exporter, packet_offset)
+            parser, game_state, logger, game_state_exporter, packet_offset)
         time.sleep(1)
 
 
