@@ -1,25 +1,19 @@
 import time
-import hslog
-import hslog.export
-import hslog.packets
-import hearthstone.enums
-import hearthstone.entities
+import logging
 from pathlib import Path
-from cph.game import power_log
 
+from hslog import packets, LogParser
 
-def is_card(entity: hearthstone.entities.Entity) -> bool:
-    return isinstance(entity, hearthstone.entities.Card)
-
-
-def is_card_in_hand(entity: hearthstone.entities.Entity) -> bool:
-    return is_card(entity) and entity.zone == hearthstone.enums.Zone.HAND
+from cph.utils.logging import make_logger
+from cph.game import power_log, exporter
 
 
 def main():
+    logger = make_logger('parse_power_log', logging.DEBUG)
     power_log_path: Path | None = None
     offset = 0
-    parser = hslog.LogParser()
+    parser = LogParser()
+    prev_game: packets.PacketTree | None = None
 
     def read_line(line: str) -> None:
         parser.read_line(line)
@@ -28,17 +22,14 @@ def main():
         power_log_path, offset = \
             power_log.handle_lines_once(read_line, power_log_path, offset)
 
-        print(f'game_meta: {parser.game_meta}')
-
-        for game_pt in parser.games:
-            game_pt: hslog.packets.PacketTree
-            entity_tree_exporter: hslog.export.EntityTreeExporter = game_pt.export(hslog.export.EntityTreeExporter)
-            game = entity_tree_exporter.game
-            if game is None:
-                continue
-            for player in game.players:
-                for card in filter(is_card_in_hand, player.entities):
-                    print(f'tags: {card.tags}')
+        # preparation for queueing / incremental exporting
+        # would not read the packets completely
+        # but rather as they come
+        current_game: packets.PacketTree = parser.games[-1]
+        game_state_exporter = exporter.GameStateExporter(parser.player_manager, logger)
+        for packet in current_game:
+            game_state_exporter.export_packet(packet)
+        game_state_exporter.flush()
 
         time.sleep(1)
 
