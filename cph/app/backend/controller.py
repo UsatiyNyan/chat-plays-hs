@@ -1,8 +1,14 @@
+import logging
+
 from PySide6.QtCore import QObject, Property
 from PySide6.QtQml import qmlRegisterType
 
+from cph.utils.logging import make_logger
+
 from .vote.controller import VoteController
+from .vote.handler import VoteHandler
 from .game.controller import GameController
+from .game.parser import PowerLogParser
 
 
 class Controller(QObject):
@@ -10,6 +16,10 @@ class Controller(QObject):
         super().__init__(parent)
         self._voteController = VoteController(self.on_vote_button_clicked)
         self._gameController = GameController()
+
+        self._logger = make_logger('app', logging.DEBUG)
+        self._handler = VoteHandler(self._voteController, self._logger)
+        self._parser = PowerLogParser(self._handler, self._logger)
 
     @Property(VoteController, constant=True)
     def voteController(self):

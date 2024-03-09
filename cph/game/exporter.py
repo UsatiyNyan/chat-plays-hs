@@ -8,17 +8,17 @@ import hslog.export
 import hslog.exceptions
 import hslog.parser
 
-from cph.game.state import GameState
+from cph.game.handler import Handler
 
 
-class GameStateExporter(hslog.export.BaseExporter):
+class Exporter(hslog.export.BaseExporter):
     def __init__(self,
                  manager: hslog.player.PlayerManager,
-                 state: GameState,
+                 handler: Handler,
                  logger: logging.Logger):
         super().__init__(packet_tree=None)  # export() is not used
         self.manager = manager
-        self.state = state
+        self.handler = handler
         self.logger = logger
         self.game: hearthstone.entities.Game | None = None
 
@@ -38,7 +38,7 @@ class GameStateExporter(hslog.export.BaseExporter):
 
     def handle_create_game(self, packet: hslog.packets.CreateGame):
         self.logger.debug(f'create game: {packet.entity=}')
-        self.state.clear()
+        self.handler.clear()
         self.game = hearthstone.entities.Game(packet.entity)
         self.game.create(packet.tags)
         for player_packet in packet.players:
@@ -70,7 +70,7 @@ class GameStateExporter(hslog.export.BaseExporter):
     def handle_block(self, packet: hslog.packets.Block):
         if packet.type == hearthstone.enums.BlockType.GAME_RESET and self.game is not None:
             self.logger.debug('game reset')
-            self.state.clear()
+            self.handler.clear()
             self.game.reset()
         super().handle_block(packet)
 
@@ -142,7 +142,13 @@ class GameStateExporter(hslog.export.BaseExporter):
         if is_mulligan:
             self.logger.debug(f'choices: friendly={packet.player}')
 
-        self.state.set_choices(known_card_choices, packet.max, is_mulligan)
+        if is_mulligan and packet.max > 3:
+            known_card_choices = list(
+                filter(lambda x: x.card_id and 'COIN' not in x.card_id, known_card_choices))
+            packet.max = min(packet.max, len(known_card_choices))
+            self.logger.debug(f'choices: removed coin, max={packet.max}')
+
+        self.handler.set_choices(known_card_choices, packet.max)
 
     def handle_options(self, packet: hslog.packets.Options):
         def filter_options(options: t.Iterable[hslog.packets.Option]):
@@ -157,7 +163,7 @@ class GameStateExporter(hslog.export.BaseExporter):
             [list(prepare_options(filter_options(available_option.options)))
              for available_option in available_options]
 
-        self.state.set_options(available_cards, available_targets)
+        self.handler.set_options(available_cards, available_targets)
 
     def handle_option(self, packet: hslog.packets.Option):
         self.logger.warning('option: {packet.entity} got thru somehow')
@@ -165,11 +171,11 @@ class GameStateExporter(hslog.export.BaseExporter):
 
     def handle_send_option(self, packet: hslog.packets.SendOption):
         super().handle_send_option(packet)
-        self.state.clear()
+        self.handler.clear()
 
     def handle_reset_game(self, packet: hslog.packets.ResetGame):
         super().handle_reset_game(packet)
-        self.state.clear()
+        self.handler.clear()
 
     def handle_sub_spell(self, packet: hslog.packets.SubSpell):
         super().handle_sub_spell(packet)
@@ -197,18 +203,18 @@ def extract_last_game(parser: hslog.LogParser) -> t.Tuple[hslog.packets.PacketTr
 
 
 def handle_packets(parser: hslog.LogParser,
-                   state: GameState,
+                   handler: Handler,
                    logger: logging.Logger,
-                   exporter: GameStateExporter | None,
+                   exporter: Exporter | None,
                    packet_offset: int) \
-        -> t.Tuple[GameStateExporter | None, int]:
+        -> t.Tuple[Exporter | None, int]:
     current_game, is_new_game = extract_last_game(parser)
     if current_game is None:
         return exporter, packet_offset
 
     exporter = exporter \
         if not is_new_game and exporter is not None\
-        else GameStateExporter(parser.player_manager, state, logger)
+        else Exporter(parser.player_manager, handler, logger)
     packet_offset = packet_offset if not is_new_game else 0
 
     for packet in current_game.packets[packet_offset:]:
