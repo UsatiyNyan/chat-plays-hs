@@ -2,8 +2,9 @@ import logging
 
 from hearthstone.entities import Card
 
+from cph.resources import card_names
 from cph.game import handler
-from cph.game.model import GameOption, load_card_names
+from cph.game.model import GameOption
 
 from .model import VoteOption
 from .controller import VoteController
@@ -20,7 +21,7 @@ class VoteHandler(handler.Handler):
         self._voteController = voteController
         self._voteModel = voteController._voteModel
         self._logger = logger
-        self._card_names = load_card_names()
+        self._card_names = card_names.load()
 
     def _card_name(self, card: Card) -> str:
         return self._card_names.get(card.card_id, card.card_id)

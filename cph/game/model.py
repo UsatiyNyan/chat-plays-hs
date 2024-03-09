@@ -28,8 +28,3 @@ class GameOption:
                 return 'Play'
             case _:
                 return 'Misc'
-
-
-def load_card_names() -> dict[str, str]:
-    # TODO: card names instead of card ids
-    return {}
