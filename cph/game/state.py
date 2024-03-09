@@ -12,10 +12,11 @@ class GameState:
         for option, targets in zip(options, options_targets):
             self.logger.debug(f'option: {option} -> {targets}')
 
-    def set_choices(self, choices: list[Card], max_count: int):
-        choices = list(
-            filter(lambda x: x.card_id and 'COIN' not in x.card_id, choices))
-        max_count = min(max_count, len(choices))
+    def set_choices(self, choices: list[Card], max_count: int, is_mulligan: bool):
+        if is_mulligan and max_count > 3:
+            choices = \
+                list(filter(lambda x: x.card_id and 'COIN' not in x.card_id, choices))
+            max_count = min(max_count, len(choices))
         self.logger.debug(f'max={max_count} choices={choices}')
 
     def clear(self):

@@ -138,10 +138,11 @@ class GameStateExporter(hslog.export.BaseExporter):
             self.logger.debug('choices: none')
             return
 
-        if packet.type == hearthstone.enums.ChoiceType.MULLIGAN:
+        is_mulligan = packet.type == hearthstone.enums.ChoiceType.MULLIGAN
+        if is_mulligan:
             self.logger.debug(f'choices: friendly={packet.player}')
 
-        self.state.set_choices(known_card_choices, packet.max)
+        self.state.set_choices(known_card_choices, packet.max, is_mulligan)
 
     def handle_options(self, packet: hslog.packets.Options):
         def filter_options(options: t.Iterable[hslog.packets.Option]):
