@@ -9,6 +9,12 @@ from .model import VoteOption
 from .controller import VoteController
 
 
+EMOTE_OPTIONS = [
+    GameOption(option=emote, group='Misc', suboptions=[])
+    for emote in ('Greetings', 'Well Played', 'Thanks', 'Wow', 'Oops', 'Threaten')
+]
+
+
 class VoteHandler(handler.Handler):
     def __init__(self, voteController: VoteController, logger: logging.Logger):
         self._voteController = voteController
@@ -16,14 +22,17 @@ class VoteHandler(handler.Handler):
         self._logger = logger
         self._card_names = load_card_names()
 
+    def _card_name(self, card: Card) -> str:
+        return self._card_names.get(card.card_id, card.card_id)
+
     def set_options(self, options: list[Card], options_targets: list[list[Card]]):
         game_options = [
             GameOption(
-                option=self._card_names.get(option.card_id, option.card_id),
+                option=self._card_name(option),
                 group=GameOption.make_group(option.zone),
                 suboptions=[
                     GameOption(
-                        option=self._card_names.get(target.card_id, target.card_id),
+                        option=self._card_name(target),
                         group='Target',
                         suboptions=[],
                     )
@@ -32,7 +41,16 @@ class VoteHandler(handler.Handler):
             )
             for option, targets in zip(options, options_targets)
         ]
-        # TODO: add emotes, end turn 'Misc' group
+
+        if len(game_options) == 0:
+            return
+
+        game_options.append(GameOption(option='End Turn',
+                            group='Misc', suboptions=[]))
+        if self._voteController._voteEmotes:
+            game_options.append(GameOption(
+                option='Emote', group='Misc', suboptions=EMOTE_OPTIONS))
+
         vote_options = [
             VoteOption(
                 option=game_option.option,
@@ -44,9 +62,10 @@ class VoteHandler(handler.Handler):
         self._voteModel.set_options(game_options, vote_options)
 
     def set_choices(self, choices: list[Card], max_count: int):
+        # TODO: handle max_count
         game_options = [
             GameOption(
-                option=self._card_names.get(choice.card_id, choice.card_id),
+                option=self._card_name(choice),
                 group='Choice',
                 suboptions=[]
             )

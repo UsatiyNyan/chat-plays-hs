@@ -16,7 +16,7 @@ class GameOption:
             return None
 
     def make_alias(self, index: int) -> str:
-        group_alias = self.group[0].lower()
+        group_alias = self.group[0].upper() if len(self.group) > 0 else 'U'
         return f"{group_alias}{index}"
 
     @staticmethod
