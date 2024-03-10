@@ -11,7 +11,7 @@ Item {
     property int votes
     property int votesMax
     property int votesSum
-    property int winnerIndex
+    property var winnerIndices
 
     height: Units.px(30)
 
@@ -32,7 +32,7 @@ Item {
             left: background.left
         }
         width: MathExt.safeFraction(votes, votesMax, 0) * background.width
-        color: winnerIndex === -1 || winnerIndex === index 
+        color: root.winnerIndices.length === 0 || root.winnerIndices.indexOf(index) !== -1
         ? Colors.tagBackgroundGreen : 'transparent'
     }
 

@@ -34,7 +34,7 @@ Rectangle {
             votes: model.votes
             votesMax: voteController.voteModel.votesMax
             votesSum: voteController.voteModel.votesSum
-            winnerIndex: voteController.voteWinnerIndex
+            winnerIndices: voteController.voteWinnerIndices
         }
         
         section {
@@ -56,7 +56,7 @@ Rectangle {
         }
         secondsLeft: voteController.voteSecondsLeft
         secondsTotal: voteController.voteSecondsTotal
-        inProgress: voteController.voteWinnerIndex === -1
+        inProgress: voteController.voteWinnerIndices.length === 0
         onClicked: voteController.onVoteButtonClicked()
         state: voteController.voteState
     }

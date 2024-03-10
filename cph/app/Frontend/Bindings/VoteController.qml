@@ -12,11 +12,15 @@ Item {
     property bool voteEmotes: true
     property int voteSecondsLeft: 10
     property int voteSecondsTotal: 10
-    property int voteWinnerIndex: -1
+    property list<int> voteWinnerIndices: []
     property int voteState: VoteController.VoteState.InProgress
 
     function onVoteButtonClicked() {
-        voteWinnerIndex = voteWinnerIndex === -1 ? 5 : -1
+        if (voteWinnerIndices.length === 0) {
+            voteWinnerIndices = [1, 5]
+        } else {
+            voteWinnerIndices = []
+        }
     }
 
     // --- debug ---

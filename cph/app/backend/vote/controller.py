@@ -1,3 +1,4 @@
+import typing as t
 from enum import IntEnum, auto
 
 from PySide6.QtCore import QObject, Property, Signal, Slot, QEnum
@@ -18,7 +19,7 @@ class VoteController(QObject):
     voteSecondsLeftChanged = Signal()
     voteEmotesChanged = Signal()
     voteSecondsTotalChanged = Signal()
-    voteWinnerIndexChanged = Signal()
+    voteWinnerIndicesChanged = Signal()
     voteStateChanged = Signal()
 
     def __init__(self, on_vote_button_clicked, parent=None):
@@ -26,7 +27,7 @@ class VoteController(QObject):
         self._voteSecondsLeft = 10
         self._voteEmotes = True
         self._voteSecondsTotal = 10
-        self._voteWinnerIndex = -1
+        self._voteWinnerIndices = []
         self._voteState = VoteState.Ready
         self._voteModel = VoteModel()
         self._onVoteButtonClicked = on_vote_button_clicked
@@ -65,15 +66,15 @@ class VoteController(QObject):
             self._voteSecondsTotal = value
             self.voteSecondsTotalChanged.emit()
 
-    @Property(int, notify=voteWinnerIndexChanged)
-    def voteWinnerIndex(self):
-        return self._voteWinnerIndex
+    @Property(list, notify=voteWinnerIndicesChanged)
+    def voteWinnerIndices(self):
+        return self._voteWinnerIndices
 
-    @voteWinnerIndex.setter
-    def voteWinnerIndex(self, value):
-        if self._voteWinnerIndex != value:
-            self._voteWinnerIndex = value
-            self.voteWinnerIndexChanged.emit()
+    @voteWinnerIndices.setter
+    def voteWinnerIndices(self, value):
+        if self._voteWinnerIndices != value:
+            self._voteWinnerIndices = value
+            self.voteWinnerIndicesChanged.emit()
 
     @Property(int, notify=voteStateChanged)
     def voteState(self):
