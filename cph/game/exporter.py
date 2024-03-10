@@ -1,5 +1,7 @@
 import typing as t
 import logging
+from bisect import bisect_left
+from datetime import datetime
 import hearthstone.entities
 import hearthstone.enums
 import hslog.packets
@@ -87,6 +89,7 @@ class Exporter(hslog.export.BaseExporter):
         entity = hearthstone.entities.Card(int(entity_id), packet.card_id)
         entity.tags = dict(packet.tags)
         self.game.register_entity(entity)
+        self.logger.debug(f'full_entity: {entity_id=} {packet.card_id=}')
 
     def handle_hide_entity(self, packet: hslog.packets.HideEntity):
         entity = self._find_entity(packet.entity)
@@ -103,11 +106,13 @@ class Exporter(hslog.export.BaseExporter):
             return
         card = t.cast(hearthstone.entities.Card, entity)
         card.reveal(packet.card_id, dict(packet.tags))
+        self.logger.debug(f'show_entity: {packet.entity=} {packet.card_id=}')
 
     def handle_change_entity(self, packet: hslog.packets.ChangeEntity):
         entity = self._find_entity(packet.entity)
         if entity is None:
-            self.logger.warning('change_entity: entity not found')
+            self.logger.warning(f'change_entity: entity {
+                                packet.entity} not found')
             return
         card = t.cast(hearthstone.entities.Card, entity)
         if card.card_id is None:
@@ -121,7 +126,8 @@ class Exporter(hslog.export.BaseExporter):
         entity_id = hslog.player.coerce_to_entity_id(packet.entity)
         entity = self._find_entity(int(entity_id))
         if entity is None:
-            self.logger.warning('tag_change: entity not found')
+            self.logger.warning(f'tag_change: entity {
+                                packet.entity} not found')
             return
         card = t.cast(hearthstone.entities.Card, entity)
         card.tag_change(packet.tag, packet.value)
@@ -167,14 +173,11 @@ class Exporter(hslog.export.BaseExporter):
 
     def handle_option(self, packet: hslog.packets.Option):
         self.logger.warning('option: {packet.entity} got thru somehow')
-        return
 
     def handle_send_option(self, packet: hslog.packets.SendOption):
-        super().handle_send_option(packet)
         self.handler.clear()
 
     def handle_reset_game(self, packet: hslog.packets.ResetGame):
-        super().handle_reset_game(packet)
         self.handler.clear()
 
     def handle_sub_spell(self, packet: hslog.packets.SubSpell):
@@ -206,18 +209,23 @@ def handle_packets(parser: hslog.LogParser,
                    handler: Handler,
                    logger: logging.Logger,
                    exporter: Exporter | None,
-                   packet_offset: int) \
-        -> t.Tuple[Exporter | None, int]:
+                   ts: datetime | None) \
+        -> t.Tuple[Exporter | None, datetime | None]:
     current_game, is_new_game = extract_last_game(parser)
     if current_game is None:
-        return exporter, packet_offset
+        return exporter, ts
 
     exporter = exporter \
-        if not is_new_game and exporter is not None\
+        if not is_new_game and exporter is not None \
         else Exporter(parser.player_manager, handler, logger)
-    packet_offset = packet_offset if not is_new_game else 0
 
-    for packet in current_game.packets[packet_offset:]:
+    packets_offset = 0 if ts is None \
+        else bisect_left([packet.ts for packet in current_game.packets], ts)
+
+    last_ts = ts
+    for packet in current_game.packets[packets_offset:]:
         exporter.export_packet(packet)
+        last_ts = packet.ts
+    exporter.flush()
 
-    return exporter, len(current_game.packets)
+    return exporter, last_ts

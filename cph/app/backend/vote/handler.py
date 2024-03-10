@@ -24,7 +24,7 @@ class VoteHandler(handler.Handler):
         self._card_names = card_names.load()
 
     def _card_name(self, card: Card) -> str:
-        return self._card_names.get(card.card_id, card.card_id)
+        return self._card_names.get(card.card_id, f'UNKNOWN: {card.card_id}')
 
     def set_options(self, options: list[Card], options_targets: list[list[Card]]):
         game_options = [
@@ -61,6 +61,8 @@ class VoteHandler(handler.Handler):
             for index, game_option in enumerate(game_options)
         ]
         self._voteModel.set_options(game_options, vote_options)
+        for option, targets in zip(options, options_targets):
+            self._logger.debug(f'option: {option} -> {targets}')
 
     def set_choices(self, choices: list[Card], max_count: int):
         # TODO: handle max_count
@@ -81,6 +83,7 @@ class VoteHandler(handler.Handler):
             for index, game_option in enumerate(game_options)
         ]
         self._voteModel.set_options(game_options, vote_options)
+        self._logger.debug(f'choices={choices} max={max_count}')
 
     def clear(self):
         self._voteModel.set_options([], [])

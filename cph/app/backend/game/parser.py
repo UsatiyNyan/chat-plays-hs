@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+from datetime import datetime
 
 from hslog import LogParser
 
@@ -17,7 +18,7 @@ class PowerLogParser:
         self._power_log_offset = 0
 
         self._exporter: exporter.Exporter | None = None
-        self._exporter_offset = 0
+        self._ts: datetime | None = None
 
     def _read_line(self, line: str):
         self._parser.read_line(line)
@@ -28,9 +29,9 @@ class PowerLogParser:
                                         self._power_log_path,
                                         self._power_log_offset)
 
-        self._exporter, self._exporter_offset = \
+        self._exporter, self._ts = \
             exporter.handle_packets(self._parser,
                                     self._handler,
                                     self._logger,
                                     self._exporter,
-                                    self._exporter_offset)
+                                    self._ts)
