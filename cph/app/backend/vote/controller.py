@@ -22,7 +22,7 @@ class VoteController(QObject):
     voteWinnerIndicesChanged = Signal()
     voteStateChanged = Signal()
 
-    def __init__(self, on_vote_button_clicked, parent=None):
+    def __init__(self, parent=None):
         super().__init__(parent)
         self._voteSecondsLeft = 10
         self._voteEmotes = True
@@ -30,7 +30,7 @@ class VoteController(QObject):
         self._voteWinnerIndices = []
         self._voteState = VoteState.Ready
         self._voteModel = VoteModel()
-        self._onVoteButtonClicked = on_vote_button_clicked
+        self.on_vote_button_clicked: t.Callable[[], None] = lambda: None
 
     @Property(VoteModel, constant=True)
     def voteModel(self):
@@ -88,7 +88,7 @@ class VoteController(QObject):
 
     @Slot()
     def onVoteButtonClicked(self):
-        self._onVoteButtonClicked()
+        self.on_vote_button_clicked()
 
 
 qmlRegisterType(VoteController, 'Frontend.Bindings', 1, 0, 'VoteController')
