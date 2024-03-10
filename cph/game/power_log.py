@@ -37,7 +37,7 @@ def read_lines_from_offset(power_log_path: Path,
                            offset: int) -> t.Generator[str, None, int]:
     with power_log_path.open('r', encoding='utf-8') as file:
         file.seek(offset)
-        yield from file
+        yield from file.readlines()
         offset = file.tell()
     return offset
 
