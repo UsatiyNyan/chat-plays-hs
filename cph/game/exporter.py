@@ -220,12 +220,11 @@ def handle_packets(parser: hslog.LogParser,
         else Exporter(parser.player_manager, handler, logger)
 
     packets_offset = 0 if ts is None \
-        else bisect_left([packet.ts for packet in current_game.packets], ts)
+        else bisect_left(current_game.packets, ts, key=lambda x: x.ts)
 
-    last_ts = ts
     for packet in current_game.packets[packets_offset:]:
         exporter.export_packet(packet)
-        last_ts = packet.ts
     exporter.flush()
 
-    return exporter, last_ts
+    ts = current_game.packets[-1].ts if len(current_game.packets) > 0 else ts
+    return exporter, ts
