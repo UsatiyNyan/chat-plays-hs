@@ -18,10 +18,12 @@ class Controller(QObject):
         self._voteController = VoteController()
         self._gameController = GameController()
 
-        self._logger = make_logger('app', logging.DEBUG)
-        self._machine = VoteMachine(self._logger)
-        self._handler = VoteHandler(self._voteController, self._machine, self._logger)
-        self._parser = PowerLogParser(self._handler, self._logger)
+        app_logger = make_logger('app', logging.DEBUG)
+        self._machine = VoteMachine(app_logger)
+        self._handler = VoteHandler(
+            self._voteController, self._machine, app_logger)
+        parser_logger = make_logger('parser', logging.WARNING)
+        self._parser = PowerLogParser(self._handler, parser_logger)
 
         self._timer = QTimer(self)
         self._timer.timeout.connect(self._tick)
@@ -38,6 +40,7 @@ class Controller(QObject):
 
     def _tick(self):
         self._parser.parse_once()
+        self._voteController.voteSecondsLeft = self._machine.tick()
 
 
 qmlRegisterType(Controller, 'Frontend.Bindings', 1, 0, 'Controller')

@@ -8,7 +8,6 @@ from cph.game import handler
 from cph.game.model import GameOption
 from cph.vote.model import VoteOption
 
-from cph.vote.state import VoteState
 from cph.vote.machine import VoteMachine
 
 from .controller import VoteController
@@ -64,8 +63,7 @@ class VoteHandler(handler.Handler):
         self._machine.set_options(vote_options, max_count)
 
     def set_options(self, options: list[Card], options_targets: list[list[Card]]):
-        if self._machine.state == VoteState.InProgress or \
-                not self._check_prev_cards(options):
+        if self._machine.is_busy or not self._check_prev_cards(options):
             return
 
         game_options = [
@@ -83,16 +81,15 @@ class VoteHandler(handler.Handler):
             )
             for option, targets in zip(options, options_targets)
         ]
-        game_options.append(GameOption(option='End Turn',
-                            group='Misc', suboptions=[]))
+        game_options.append(
+            GameOption(option='End Turn', group='Misc', suboptions=[]))
         if self._controller.voteEmotes:
-            game_options.append(GameOption(
-                option='Emote', group='Misc', suboptions=EMOTE_OPTIONS))
+            game_options.append(
+                GameOption(option='Emote', group='Misc', suboptions=EMOTE_OPTIONS))
         self._set_game_options(game_options)
 
     def set_choices(self, choices: list[Card], max_count: int):
-        if self._machine.state == VoteState.InProgress or \
-                not self._check_prev_cards(choices):
+        if self._machine.is_busy or not self._check_prev_cards(choices):
             return
 
         game_options = [
@@ -106,12 +103,12 @@ class VoteHandler(handler.Handler):
         self._set_game_options(game_options, max_count)
 
     def clear(self):
-        if self._machine.state == VoteState.InProgress or not self._check_prev_cards([]):
+        if self._machine.is_busy or not self._check_prev_cards([]):
             return
         self._set_game_options([])
 
     def on_vote_button_clicked(self):
-        self._machine.on_vote_button_clicked()
+        self._machine.on_vote_button_clicked(self._controller.voteSecondsTotal)
 
     def on_update_votes(self, vote_options: list[VoteOption]):
         self._model.update_votes(vote_options)
