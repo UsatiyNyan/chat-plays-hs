@@ -16,10 +16,17 @@ Item {
     property int voteState: VoteController.VoteState.InProgress
 
     function onVoteButtonClicked() {
-        if (voteWinnerIndices.length === 0) {
-            voteWinnerIndices = [1, 5]
-        } else {
-            voteWinnerIndices = []
+        voteState = _nextVoteState()
+    }
+
+    function _nextVoteState() {
+        switch (voteState) {
+            case VoteController.VoteState.Ready:
+                return VoteController.VoteState.InProgress
+            case VoteController.VoteState.InProgress:
+                return VoteController.VoteState.Finished
+            case VoteController.VoteState.Finished:
+                return VoteController.VoteState.Ready
         }
     }
 

@@ -9,15 +9,19 @@ PrimaryButton {
 
     property int secondsLeft
     property int secondsTotal
-    property bool inProgress
     property int state
 
     visible: state !== VoteController.VoteState.Finished
-    text: !inProgress 
-    ? 'Next vote'
-    : secondsTotal > 0 
-    ? `Vote ends in ${secondsLeft} s` 
-    : 'End vote' 
+    text: getText(state)
+
+    function getText(state) {
+        switch (state) {
+            case VoteController.VoteState.Ready: return 'Start vote'
+            case VoteController.VoteState.InProgress: 
+                return (secondsTotal > 0 ? `Vote ends in ${secondsLeft}s` : 'End vote')
+            case VoteController.VoteState.Finished: return 'Next vote'
+        }
+    }
 
     background: Rectangle {
         anchors {
