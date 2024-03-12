@@ -4,7 +4,6 @@ from PySide6.QtCore import QObject, Property, QTimer
 from PySide6.QtQml import qmlRegisterType
 
 from cph.utils.logging import make_logger
-from cph.vote.machine import VoteMachine
 
 from .vote.controller import VoteController
 from .vote.handler import VoteHandler
@@ -15,13 +14,11 @@ from .game.parser import PowerLogParser
 class Controller(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self._voteController = VoteController()
+        app_logger = make_logger('app', logging.DEBUG)
+        self._voteController = VoteController(app_logger)
         self._gameController = GameController()
 
-        app_logger = make_logger('app', logging.DEBUG)
-        self._machine = VoteMachine(app_logger)
-        self._handler = VoteHandler(
-            self._voteController, self._machine, app_logger)
+        self._handler = VoteHandler(self._voteController, app_logger)
         parser_logger = make_logger('parser', logging.WARNING)
         self._parser = PowerLogParser(self._handler, parser_logger)
 
@@ -40,7 +37,7 @@ class Controller(QObject):
 
     def _tick(self):
         self._parser.parse_once()
-        self._voteController.voteSecondsLeft = self._machine.tick()
+        self._voteController.tick()
 
 
 qmlRegisterType(Controller, 'Frontend.Bindings', 1, 0, 'Controller')
