@@ -147,16 +147,16 @@ class VoteController(QObject):
                 )
             )
         self._voteModel.set_options(game_options, vote_options)
-        # self._interface.set_options(vote_options, max_count)
+        self._interface.set_options(vote_options, max_count)
 
     def _start_vote(self):
         self.voteState = VoteState.InProgress
         self.voteSecondsLeft = self.voteSecondsTotal
-        # self._interface.start()
+        self._interface.start()
 
     def _stop_vote(self):
         self.voteState = VoteState.Finished
-        # self.winnerIndices = self._interface.stop()
+        self.winnerIndices = self._interface.stop()
 
     def _prepare_vote(self):
         self.voteState = VoteState.Ready
@@ -174,8 +174,8 @@ class VoteController(QObject):
     def _fetch_votes(self):
         if self._voteState != VoteState.InProgress:
             return
-        # vote_options = self._interface.fetch()
-        # self._voteModel.update_votes(vote_options)
+        vote_options = self._interface.fetch()
+        self._voteModel.update_votes(vote_options)
 
 
 qmlRegisterType(VoteController, 'Frontend.Bindings', 1, 0, 'VoteController')
