@@ -114,6 +114,7 @@ class VoteModel(QAbstractListModel):
 
     def update_votes(self, vote_options: list[VoteOption]):
         for vote_element, vote_option in zip(self._vote_elements, vote_options):
+            assert (vote_element.option == vote_option.option)
             vote_element.votes = vote_option.votes
 
         if (row_count := self.rowCount()) > 0:

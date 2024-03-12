@@ -1,11 +1,13 @@
 import logging
 from enum import IntEnum, auto
+from typing import DefaultDict
 
 from PySide6.QtCore import QObject, Property, Signal, Slot, QEnum
 from PySide6.QtQml import qmlRegisterType
 
 from cph.game.model import GameOption
 from cph.vote.model import VoteOption
+from cph.vote.interface import VoteInterface
 
 from .model import VoteModel
 
@@ -34,6 +36,7 @@ class VoteController(QObject):
         self._voteWinnerIndices = []
         self._voteState = VoteState.Ready
         self._voteModel = VoteModel()
+        self._interface = VoteInterface()
 
         self._game_options: list[GameOption] = []
 
@@ -131,14 +134,18 @@ class VoteController(QObject):
 
     def _set_game_options(self, game_options: list[GameOption], max_count: int = 1):
         self._game_options = game_options
-        vote_options = [
-            VoteOption(
-                option=game_option.option,
-                alias=game_option.make_alias(index),
-                votes=0,
+        group_indices: DefaultDict[str, int] = DefaultDict(int)
+        vote_options = []
+        for game_option in game_options:
+            group_indices[game_option.group] += 1
+            index = group_indices[game_option.group]
+            vote_options.append(
+                VoteOption(
+                    option=game_option.option,
+                    alias=game_option.make_alias(index),
+                    votes=0,
+                )
             )
-            for index, game_option in enumerate(game_options)
-        ]
         self._voteModel.set_options(game_options, vote_options)
         # self._interface.set_options(vote_options, max_count)
 
