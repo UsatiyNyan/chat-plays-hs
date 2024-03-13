@@ -13,25 +13,15 @@ class VoteEntry:
 
 
 class VoteClient:
-    def start(self):
-        pass
-
-    def stop(self):
-        pass
-
-    def fetch(self) -> t.Iterable[VoteEntry]:
-        pass
-
-
-class LoggingVoteClient(VoteClient):
     def __init__(self, logger: logging.Logger):
         self._logger = logger
 
     def start(self):
-        pass
+        self._logger.info('VoteClient started')
 
     def stop(self):
-        pass
+        self._logger.info('VoteClient stopped')
 
     def fetch(self) -> t.Iterable[VoteEntry]:
-        pass
+        self._logger.info('VoteClient fetched')
+        return []

@@ -10,7 +10,7 @@ from .prepare import parse_vote, calc_vote_weight, choose_winners
 class VoteInterface:
     def __init__(self, logger: logging.Logger):
         self._logger = logger
-        self._client = VoteClient()
+        self._client = VoteClient(self._logger)
 
         self._max_count: int = 0
         self._vote_options: list[VoteOption] = []

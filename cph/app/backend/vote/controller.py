@@ -36,7 +36,7 @@ class VoteController(QObject):
         self._voteWinnerIndices = []
         self._voteState = VoteState.Ready
         self._voteModel = VoteModel()
-        self._interface = VoteInterface()
+        self._interface = VoteInterface(self._logger)
 
         self._game_options: list[GameOption] = []
 
