@@ -2,6 +2,8 @@ import typing as t
 import logging
 from datetime import datetime, UTC
 
+from cph.utils.generator import is_not_none
+
 from .model import VoteOption
 from .client import VoteClient, VoteEntry
 from .prepare import parse_vote, calc_vote_weight, choose_winners
@@ -40,7 +42,8 @@ class VoteInterface:
 
     def fetch(self) -> list[VoteOption]:
         for vote_aliases in self._parse_votes(self._client.fetch()):
-            vote_indices = list(filter(None, map(self._vote_aliases.get, vote_aliases)))
+            vote_indices = \
+                list(filter(is_not_none, map(self._vote_aliases.get, vote_aliases)))
             vote_weight = calc_vote_weight(vote_indices)
             for vote_index in vote_indices:
                 self._vote_options[vote_index].votes += vote_weight

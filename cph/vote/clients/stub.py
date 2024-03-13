@@ -24,7 +24,6 @@ class StubVoteClient(VoteClient):
         super().stop()
 
     def fetch(self) -> t.Iterable[VoteEntry]:
-        super().fetch()
         with self._entries_lock:
             entries = self._entries
             self._entries = []
