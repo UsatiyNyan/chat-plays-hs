@@ -9,13 +9,12 @@ PrimaryButton {
 
     property int secondsLeft
     property int secondsTotal
-    property int state
+    property int voteState
 
-    visible: state !== VoteController.VoteState.Finished
-    text: getText(state)
+    text: getText(voteState)
 
-    function getText(state) {
-        switch (state) {
+    function getText(aVoteState) {
+        switch (aVoteState) {
             case VoteController.VoteState.Ready: return 'Start vote'
             case VoteController.VoteState.InProgress: 
                 return (secondsTotal > 0 ? `Vote ends in ${secondsLeft}s` : 'End vote')
@@ -29,8 +28,15 @@ PrimaryButton {
             bottom: parent.bottom
             left: parent.left
         }
-        width: parent.width * (secondsTotal === 0 ? 1 : secondsLeft / secondsTotal)
+        width: parent.width * getRatio(root.voteState, root.secondsLeft, root.secondsTotal)
         Behavior on width { NumberAnimation { duration: 1000 } }
         color: root.backgroundColor
+    }
+
+    function getRatio(aVoteState, secondsLeft, secondsTotal) {
+        if (aVoteState === VoteController.VoteState.InProgress && secondsTotal > 0) {
+            return secondsLeft / secondsTotal
+        }
+        return 1
     }
 }

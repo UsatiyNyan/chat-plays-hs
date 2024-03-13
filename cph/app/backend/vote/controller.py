@@ -154,16 +154,18 @@ class VoteController(QObject):
     def _start_vote(self):
         self.voteState = VoteState.InProgress
         self.voteSecondsLeft = self.voteSecondsTotal
+        self.voteWinnerIndices = []
         self._interface.start()
 
     def _stop_vote(self):
         self._fetch_votes()  # fetch votes one last time
         self.voteState = VoteState.Finished
-        self.winnerIndices = self._interface.stop()
+        self.voteWinnerIndices = self._interface.stop()
 
     def _prepare_vote(self):
         self.voteState = VoteState.Ready
         if len(self._voteWinnerIndices) != 1:
+            self._set_game_options([])
             return
 
         index = self._voteWinnerIndices[0]
@@ -172,6 +174,10 @@ class VoteController(QObject):
             return
 
         suboptions = self._game_options[index].suboptions
+        if len(suboptions) <= 1:
+            self._set_game_options([])
+            return
+
         self._set_game_options(suboptions)
 
     def _fetch_votes(self):

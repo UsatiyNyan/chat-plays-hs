@@ -34,6 +34,7 @@ Item {
         width: MathExt.safeFraction(votes, votesMax, 0) * background.width
         color: root.winnerIndices.length === 0 || root.winnerIndices.indexOf(index) !== -1
         ? Colors.tagBackgroundGreen : 'transparent'
+        Behavior on width { NumberAnimation { duration: 500 } }
     }
 
     Rectangle {

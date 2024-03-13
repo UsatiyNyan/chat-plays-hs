@@ -54,9 +54,10 @@ Rectangle {
             left: parent.left
             right: parent.right
         }
+        visible: listView.count > 0
         secondsLeft: voteController.voteSecondsLeft
         secondsTotal: voteController.voteSecondsTotal
         onClicked: voteController.onVoteButtonClicked()
-        state: voteController.voteState
+        voteState: voteController.voteState
     }
 }
