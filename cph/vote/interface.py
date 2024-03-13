@@ -16,8 +16,11 @@ class VoteInterface:
         self._vote_options: list[VoteOption] = []
         self._vote_aliases: dict[str, int] = {}
 
-        self._uids_voted: set[int] = set()
+        self._uids_voted: set[str] = set()
         self._ts_begin: datetime | None = None
+
+    def set_client(self, client: VoteClient):
+        self._client = client
 
     def set_options(self, vote_options: list[VoteOption], max_count: int):
         self._max_count = max_count

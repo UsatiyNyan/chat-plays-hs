@@ -8,7 +8,7 @@ from dataclasses import dataclass
 @dataclass
 class VoteEntry:
     ts: datetime
-    uid: int
+    uid: str
     msg: str
 
 
