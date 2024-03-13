@@ -35,6 +35,7 @@ Rectangle {
             votesMax: voteController.voteModel.votesMax
             votesSum: voteController.voteModel.votesSum
             winnerIndices: voteController.voteWinnerIndices
+            voteState: voteController.voteState
         }
         
         section {

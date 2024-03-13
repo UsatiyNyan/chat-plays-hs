@@ -15,7 +15,7 @@ from cph.vote.prepare import (
         ('!vote a1 B2 c3 D4 e5', ['A1', 'B2', 'C3', 'D4']),
         ('!VotE a1 b2 C3 d4', ['A1', 'B2', 'C3', 'D4']),
         ('!vOte a1 B2 c3', ['A1', 'B2', 'C3']),
-        ('!votE a1 b2', ['A1', 'B2']),
+        ('!votE h1 m2', ['H1', 'M2']),
         ('!Vote a1', ['A1']),
         ('!vote', None),
         ('wrong', None),

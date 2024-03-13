@@ -2,6 +2,7 @@ import QtQuick
 
 import Frontend.Utils
 import Frontend.Styles
+import Frontend.Bindings
 
 Item {
     id: root
@@ -12,6 +13,7 @@ Item {
     property int votesMax
     property int votesSum
     property var winnerIndices
+    property int voteState
 
     height: Units.px(30)
 
@@ -32,7 +34,8 @@ Item {
             left: background.left
         }
         width: MathExt.safeFraction(votes, votesMax, 0) * background.width
-        color: root.winnerIndices.length === 0 || root.winnerIndices.indexOf(index) !== -1
+        color: root.voteState === VoteController.VoteState.InProgress || 
+        (root.winnerIndices.indexOf(index) !== -1 && root.voteState === VoteController.VoteState.Finished)
         ? Colors.tagBackgroundGreen : 'transparent'
         Behavior on width { NumberAnimation { duration: 500 } }
     }

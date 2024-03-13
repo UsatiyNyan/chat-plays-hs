@@ -12,7 +12,7 @@ Item {
     property bool voteEmotes: true
     property int voteSecondsLeft: 10
     property int voteSecondsTotal: 10
-    property list<int> voteWinnerIndices: []
+    property list<int> voteWinnerIndices: [5]
     property int voteState: VoteController.VoteState.InProgress
 
     function onVoteButtonClicked() {

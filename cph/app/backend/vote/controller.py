@@ -163,8 +163,8 @@ class VoteController(QObject):
         self.voteWinnerIndices = self._interface.stop()
 
     def _prepare_vote(self):
-        self.voteState = VoteState.Ready
         if len(self._voteWinnerIndices) != 1:
+            self.voteState = VoteState.Ready
             self._set_game_options([])
             return
 
@@ -175,10 +175,12 @@ class VoteController(QObject):
 
         suboptions = self._game_options[index].suboptions
         if len(suboptions) <= 1:
+            self.voteState = VoteState.Ready
             self._set_game_options([])
             return
 
         self._set_game_options(suboptions)
+        self._start_vote()
 
     def _fetch_votes(self):
         if self._voteState != VoteState.InProgress:
