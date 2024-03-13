@@ -155,6 +155,7 @@ class VoteController(QObject):
         self._interface.start()
 
     def _stop_vote(self):
+        self._fetch_votes()  # fetch votes one last time
         self.voteState = VoteState.Finished
         self.winnerIndices = self._interface.stop()
 
