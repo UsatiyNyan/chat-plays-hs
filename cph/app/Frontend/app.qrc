@@ -25,8 +25,12 @@
     <file>Components/WindowCloseButton.qml</file>
     <file>Components/WindowControlButton.qml</file>
     <file>Components/PrimaryButton.qml</file>
+    <file>Components/SecondaryButton.qml</file>
+    <file>Components/DangerButton.qml</file>
     <file>Components/SettingsSwitch.qml</file>
     <file>Components/SettingsSlider.qml</file>
+    <file>Components/SettingsInput.qml</file>
+    <file>Components/SettingsClientWidget.qml</file>
     <file>Components/VoteHeader.qml</file>
     <file>Components/VoteDelegate.qml</file>
     <file>Components/VoteButton.qml</file>

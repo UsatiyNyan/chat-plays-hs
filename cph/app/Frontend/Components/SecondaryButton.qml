@@ -11,10 +11,10 @@ Button {
     hoverEnabled: true
     font.pixelSize: 20
     readonly property color backgroundColor: root.pressed
-    ? Colors.buttonPrimaryActive
+    ? Colors.buttonSecondaryActive
     : root.hovered
-    ? Colors.buttonPrimaryHover
-    : Colors.buttonPrimary
+    ? Colors.buttonSecondaryHover
+    : Colors.buttonSecondary
 
     background: Rectangle {
         color: root.backgroundColor

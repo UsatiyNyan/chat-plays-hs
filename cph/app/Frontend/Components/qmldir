@@ -6,9 +6,13 @@ WindowDragArea 1.0 WindowDragArea.qml
 WindowControlButton 1.0 WindowControlButton.qml
 
 PrimaryButton 1.0 PrimaryButton.qml
+SecondaryButton 1.0 SecondaryButton.qml
+DangerButton 1.0 DangerButton.qml
 
 SettingsSwitch 1.0 SettingsSwitch.qml
 SettingsSlider 1.0 SettingsSlider.qml
+SettingsInput 1.0 SettingsInput.qml
+SettingsClientWidget 1.0 SettingsClientWidget.qml
 
 VoteHeader 1.0 VoteHeader.qml
 VoteDelegate 1.0 VoteDelegate.qml

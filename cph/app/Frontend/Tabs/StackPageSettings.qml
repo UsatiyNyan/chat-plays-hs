@@ -24,10 +24,10 @@ Rectangle {
             id: voteEmotesSwitch
 
             width: parent.width
-
             text: 'Vote for Emotes'
-            checked: { checked = voteController.voteEmotes }
-            onCheckedChanged: { voteController.voteEmotes = checked }
+
+            Component.onCompleted: checked = voteController.voteEmotes
+            onCheckedChanged: voteController.voteEmotes = checked
         }
 
         Rectangle {
@@ -46,8 +46,26 @@ Rectangle {
             to: 40
             stepSize: 1
 
-            value: { value = voteController.voteSecondsTotal }
-            onValueChanged: { voteController.voteSecondsTotal = value }
+            Component.onCompleted: value = voteController.voteSecondsTotal
+            onValueChanged: voteController.voteSecondsTotal = value
+        }
+
+        Rectangle {
+            width: parent.width
+            height: Units.px(1)
+            color: Colors.borderSubtle01
+        }
+
+        SettingsClientWidget {
+            width: parent.width
+
+            voteController: root.voteController
+        }
+
+        Rectangle {
+            width: parent.width
+            height: Units.px(1)
+            color: Colors.borderSubtle01
         }
 
         PrimaryButton {

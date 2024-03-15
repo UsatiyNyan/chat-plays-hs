@@ -4,20 +4,21 @@ import QtQuick.Controls
 import Frontend.Utils
 import Frontend.Styles
 
-Button {
+DelayButton {
     id: root
 
     height: Units.px(36)
     hoverEnabled: true
     font.pixelSize: 20
     readonly property color backgroundColor: root.pressed
-    ? Colors.buttonPrimaryActive
+    ? Colors.buttonDangerActive
     : root.hovered
-    ? Colors.buttonPrimaryHover
-    : Colors.buttonPrimary
+    ? Colors.buttonDangerHover
+    : Colors.buttonDangerPrimary
 
     background: Rectangle {
         color: root.backgroundColor
+        width: parent.width * (1 - root.progress)
     }
 
     contentItem: Text {

@@ -8,19 +8,27 @@ Item {
         Finished
     }
 
+    enum VoteClientState {
+        NotConnected,
+        Connected,
+        Error
+    }
+
     readonly property ListModel voteModel: VoteModel {}
     property bool voteEmotes: true
     property int voteSecondsLeft: 10
     property int voteSecondsTotal: 10
     property list<int> voteWinnerIndices: [5]
     property int voteState: VoteController.VoteState.InProgress
+    property int voteClientState: VoteController.VoteClientState.NotConnected
 
     function onVoteButtonClicked() {
         voteState = _nextVoteState()
     }
 
-    function onVoteConnect(url) {
-        console.log('voteConnect', url)
+    function onVoteClientButtonClicked(url) {
+        console.log('voteClientButtonClicked', url)
+        voteClientState = _nextVoteClientState()
     }
 
     // --- debug ---
@@ -32,6 +40,17 @@ Item {
                 return VoteController.VoteState.Finished
             case VoteController.VoteState.Finished:
                 return VoteController.VoteState.Ready
+        }
+    }
+
+    function _nextVoteClientState() {
+        switch (voteClientState) {
+            case VoteController.VoteClientState.NotConnected:
+                return VoteController.VoteClientState.Connected
+            case VoteController.VoteClientState.Connected:
+                return VoteController.VoteClientState.Error
+            case VoteController.VoteClientState.Error:
+                return VoteController.VoteClientState.NotConnected
         }
     }
 

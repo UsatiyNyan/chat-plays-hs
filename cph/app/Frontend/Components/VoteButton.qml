@@ -1,7 +1,5 @@
 import QtQuick
 
-import Frontend.Utils
-import Frontend.Styles
 import Frontend.Bindings
 
 PrimaryButton {
