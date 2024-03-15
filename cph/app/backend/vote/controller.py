@@ -8,7 +8,7 @@ from PySide6.QtQml import qmlRegisterType
 from cph.game.model import GameOption
 from cph.vote.model import VoteOption
 from cph.vote.interface import VoteInterface
-from cph.vote.clients.stub import StubVoteClient
+from cph.vote.clients.socket import SocketVoteClient
 
 from .model import VoteModel
 
@@ -38,7 +38,6 @@ class VoteController(QObject):
         self._voteState = VoteState.Ready
         self._voteModel = VoteModel()
         self._interface = VoteInterface(self._logger)
-        self._interface.set_client(StubVoteClient(self._logger))
 
         self._game_options: list[GameOption] = []
 
@@ -99,6 +98,10 @@ class VoteController(QObject):
     @property
     def is_busy(self) -> bool:
         return self._voteState != VoteState.Ready
+
+    @Slot(str)
+    def onVoteConnect(self, url: str):
+        self._logger.info('onVoteConnect: %s', url)
 
     @Slot()
     def onVoteButtonClicked(self):

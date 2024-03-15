@@ -19,6 +19,11 @@ Item {
         voteState = _nextVoteState()
     }
 
+    function onVoteConnect(url) {
+        console.log('voteConnect', url)
+    }
+
+    // --- debug ---
     function _nextVoteState() {
         switch (voteState) {
             case VoteController.VoteState.Ready:
@@ -30,7 +35,6 @@ Item {
         }
     }
 
-    // --- debug ---
     onVoteEmotesChanged: {
         console.log('voteEmotes', voteEmotes)
     }
