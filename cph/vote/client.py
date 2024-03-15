@@ -1,6 +1,7 @@
 import typing as t
 import logging
 
+import urllib.parse
 from datetime import datetime
 from dataclasses import dataclass
 
@@ -15,6 +16,12 @@ class VoteEntry:
 class VoteClient:
     def __init__(self, logger: logging.Logger):
         self._logger = logger
+
+    def connect(self, url: urllib.parse.ParseResult) -> bool:
+        pass
+
+    def disconnect(self):
+        pass
 
     def start(self):
         self._logger.info('VoteClient started')

@@ -1,18 +1,20 @@
 import typing as t
 import logging
+import urllib.parse
 from datetime import datetime, UTC
 
 from cph.utils.generator import is_not_none
 
 from .model import VoteOption
 from .client import VoteClient, VoteEntry
+from .clients import SocketVoteClient
 from .prepare import parse_vote, calc_vote_weight, choose_winners
 
 
 class VoteInterface:
     def __init__(self, logger: logging.Logger):
         self._logger = logger
-        self._client = VoteClient(self._logger)
+        self._client: VoteClient | None = None
 
         self._max_count: int = 0
         self._vote_options: list[VoteOption] = []
@@ -21,8 +23,24 @@ class VoteInterface:
         self._uids_voted: set[str] = set()
         self._ts_begin: datetime | None = None
 
-    def set_client(self, client: VoteClient):
-        self._client = client
+    def connect(self, url_str: str) -> bool:
+        url = urllib.parse.urlparse(url_str)
+        self._client = self._make_client(url)
+        if self._client is None:
+            return False
+        return self._client.connect(url)
+
+    def _make_client(self, url: urllib.parse.ParseResult) -> VoteClient | None:
+        match url.scheme:
+            case 'localhost':
+                return SocketVoteClient(self._logger)
+            case _:
+                self._logger.error(f'VoteInterface: unknown scheme {url.scheme}')
+                return None
+
+    def disconnect(self):
+        if self._client is not None:
+            self._client.disconnect()
 
     def set_options(self, vote_options: list[VoteOption], max_count: int):
         self._max_count = max_count
@@ -34,15 +52,20 @@ class VoteInterface:
     def start(self):
         self._uids_voted.clear()
         self._ts_begin = datetime.now(tz=UTC)
-        self._client.start()
+        if self._client is not None:
+            self._client.start()
 
     def stop(self) -> list[int]:
-        self._client.stop()
+        if self._client is not None:
+            self._client.stop()
         return choose_winners(self._vote_options, self._max_count)
 
     def fetch(self) -> list[VoteOption]:
+        if self._client is None:
+            return []
+
         for vote_aliases in self._parse_votes(self._client.fetch()):
-            vote_indices = \
+            vote_indices: list[int] = \
                 list(filter(is_not_none, map(self._vote_aliases.get, vote_aliases)))
             vote_weight = calc_vote_weight(vote_indices)
             for vote_index in vote_indices:

@@ -8,7 +8,6 @@ from PySide6.QtQml import qmlRegisterType
 from cph.game.model import GameOption
 from cph.vote.model import VoteOption
 from cph.vote.interface import VoteInterface
-from cph.vote.clients.socket import SocketVoteClient
 
 from .model import VoteModel
 
@@ -19,14 +18,22 @@ class VoteState(IntEnum):
     Finished = auto()
 
 
+class VoteClientState(IntEnum):
+    NotConnected = auto()
+    Connected = auto()
+    Error = auto()
+
+
 class VoteController(QObject):
     QEnum(VoteState)
+    QEnum(VoteClientState)
 
     voteSecondsLeftChanged = Signal()
     voteEmotesChanged = Signal()
     voteSecondsTotalChanged = Signal()
     voteWinnerIndicesChanged = Signal()
     voteStateChanged = Signal()
+    voteClientStateChanged = Signal()
 
     def __init__(self, logger: logging.Logger, parent=None):
         super().__init__(parent)
@@ -36,9 +43,10 @@ class VoteController(QObject):
         self._voteSecondsTotal = 10
         self._voteWinnerIndices = []
         self._voteState = VoteState.Ready
+        self._voteClientState = VoteClientState.NotConnected
         self._voteModel = VoteModel()
-        self._interface = VoteInterface(self._logger)
 
+        self._interface = VoteInterface(self._logger)
         self._game_options: list[GameOption] = []
 
     @Property(VoteModel, constant=True)
@@ -98,10 +106,6 @@ class VoteController(QObject):
     @property
     def is_busy(self) -> bool:
         return self._voteState != VoteState.Ready
-
-    @Slot(str)
-    def onVoteConnect(self, url: str):
-        self._logger.info('onVoteConnect: %s', url)
 
     @Slot()
     def onVoteButtonClicked(self):
@@ -190,6 +194,32 @@ class VoteController(QObject):
             return
         vote_options = self._interface.fetch()
         self._voteModel.update_votes(vote_options)
+
+    @Property(int, notify=voteClientStateChanged)
+    def voteClientState(self):
+        return self._voteClientState
+
+    @voteClientState.setter
+    def voteClientState(self, value):
+        if self._voteClientState != value:
+            self._voteClientState = value
+            self.voteClientStateChanged.emit()
+
+    @Slot(str)
+    def onVoteClientButtonClicked(self, url: str):
+        match self._voteClientState:
+            case VoteClientState.NotConnected:
+                if self._interface.connect(url):
+                    self.voteClientState = VoteClientState.Connected
+                else:
+                    self.voteClientState = VoteClientState.Error
+            case VoteClientState.Connected:
+                self._interface.disconnect()
+                self.voteClientState = VoteClientState.NotConnected
+            case VoteClientState.Error:
+                self.voteClientState = VoteClientState.NotConnected
+            case _:
+                self._logger.error('VoteClientState is invalid')
 
 
 qmlRegisterType(VoteController, 'Frontend.Bindings', 1, 0, 'VoteController')

@@ -1,9 +1,11 @@
 import typing as t
 import logging
 import socket
+import urllib.parse
 
 from enum import Enum, auto
 from datetime import datetime, UTC
+from cph.utils.generator import is_not_none
 
 from cph.vote.client import VoteClient, VoteEntry
 
@@ -17,8 +19,26 @@ class SocketClientState(Enum):
 class SocketVoteClient(VoteClient):
     def __init__(self, logger: logging.Logger):
         super().__init__(logger)
-        self._server = self._create_server()
+        self._server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._client: socket.socket | None = None
+
+    def connect(self, url: urllib.parse.ParseResult) -> bool:
+        host, port = url.scheme, url.path
+        try:
+            self._server.bind((host, int(port)))
+        except Exception:
+            return False
+
+        self._server.setblocking(False)
+        self._server.listen(1)
+        self._logger.info(f'VoteClient server started at {host}:{port}')
+        return True
+
+    def disconnect(self):
+        if self._client is not None:
+            self._client.close()
+            self._client = None
+        self._server.close()
 
     def start(self):
         super().start()
@@ -38,11 +58,11 @@ class SocketVoteClient(VoteClient):
 
         entries: list[VoteEntry] = []
         while True:
-            vote_entry, client_state = self._serve_client(self._client)
+            data, client_state = self._retrieve_data(self._client)
             match client_state:
                 case SocketClientState.HasData:
-                    if vote_entry is not None:
-                        entries.append(vote_entry)
+                    maybe_entries = map(self._parse_entry, data.split('\n'))
+                    entries.extend(filter(is_not_none, maybe_entries))
                 case SocketClientState.NoData:
                     break
                 case SocketClientState.Disconnected:
@@ -52,34 +72,27 @@ class SocketVoteClient(VoteClient):
 
         return entries
 
-    def _create_server(self) -> socket.socket:
-        server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server_socket.setblocking(False)
-        host = socket.gethostname()
-        port = 13131
-        server_socket.bind((host, port))
-        server_socket.listen(1)
-        self._logger.info(f'VoteClient server started at {host}:{port}')
-        return server_socket
-
-    def _serve_client(self, conn: socket.socket) \
-            -> t.Tuple[VoteEntry | None, SocketClientState]:
+    def _retrieve_data(self, conn: socket.socket) -> t.Tuple[str, SocketClientState]:
         try:
             data = conn.recv(1024)
             if not data:
-                return None, SocketClientState.Disconnected
+                return '', SocketClientState.Disconnected
+            return data.decode('utf-8'), SocketClientState.HasData
         except BlockingIOError:
-            return None, SocketClientState.NoData
+            return '', SocketClientState.NoData
         except ConnectionResetError:
-            return None, SocketClientState.Disconnected
+            return '', SocketClientState.Disconnected
 
-        msg = data.decode('utf-8')
+    def _parse_entry(self, msg: str) -> VoteEntry | None:
+        if not msg:
+            return None
+
         uid_and_msg = msg.split(':')
         if len(uid_and_msg) != 2:
             self._logger.error(f'VoteClient received invalid message: {msg}')
-            return None, SocketClientState.HasData
+            return None
 
         uid, msg = uid_and_msg
         vote_entry = VoteEntry(datetime.now(tz=UTC), uid, msg)
         self._logger.info(f'VoteClient received: {vote_entry}')
-        return vote_entry, SocketClientState.HasData
+        return vote_entry
