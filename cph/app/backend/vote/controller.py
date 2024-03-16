@@ -221,5 +221,8 @@ class VoteController(QObject):
             case _:
                 self._logger.error('VoteClientState is invalid')
 
+    def close(self):
+        self._interface.disconnect()
+
 
 qmlRegisterType(VoteController, 'Frontend.Bindings', 1, 0, 'VoteController')

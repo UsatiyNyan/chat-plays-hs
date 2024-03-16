@@ -11,4 +11,8 @@ QtObject {
         console.log('Enabling power log')
         isPowerLogEnabled = true
     }
+
+    function close() {
+        console.log('Close GameController')
+    }
 }

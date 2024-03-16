@@ -31,6 +31,10 @@ Item {
         voteClientState = _nextVoteClientState()
     }
 
+    function close() {
+        console.log('Close VoteController')
+    }
+
     // --- debug ---
     function _nextVoteState() {
         switch (voteState) {

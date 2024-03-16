@@ -1,6 +1,6 @@
 import logging
 
-from PySide6.QtCore import QObject, Property, QTimer
+from PySide6.QtCore import QObject, Property, QTimer, Slot
 from PySide6.QtQml import qmlRegisterType
 
 from cph.utils.logging import make_logger
@@ -19,7 +19,8 @@ class Controller(QObject):
         self._gameController = GameController()
 
         self._handler = VoteHandler(self._voteController, app_logger)
-        parser_logger = make_logger('parser', logging.WARNING)
+        parser_logger = app_logger.getChild('parser')
+        parser_logger.setLevel(logging.WARNING)
         self._parser = PowerLogParser(self._handler, parser_logger)
 
         self._timer = QTimer(self)
@@ -38,6 +39,11 @@ class Controller(QObject):
     def _tick(self):
         self._parser.parse_once()
         self._voteController.tick()
+
+    @Slot()
+    def close(self):
+        self._timer.stop()
+        self._voteController.close()
 
 
 qmlRegisterType(Controller, 'Frontend.Bindings', 1, 0, 'Controller')

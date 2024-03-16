@@ -15,6 +15,8 @@ ApplicationWindow {
     flags: Qt.Window | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
     color: Colors.background
 
+    property var controller: Controller {}
+
     WindowDragArea {
         dragWindow: root
         anchors.fill: parent
@@ -22,7 +24,7 @@ ApplicationWindow {
 
     StackTabView {
         anchors { fill: parent; margins: Units.px(10) }
-        controller: Controller {}
+        controller: root.controller
     }
 
     WindowCloseButton {
@@ -35,4 +37,6 @@ ApplicationWindow {
         target: root
         edge: Qt.BottomEdge | Qt.LeftEdge
     }
+
+    onClosing: controller.close()
 }
