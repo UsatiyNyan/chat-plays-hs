@@ -29,8 +29,8 @@ class VoteClient:
         self._logger.info('VoteClient started, '
                           f'options: {vote_options}, max_count: {max_count}')
 
-    def stop(self):
-        self._logger.info('VoteClient stopped')
+    def stop(self, winners: list[VoteOption]):
+        self._logger.info(f'VoteClient stopped, winners: {winners}')
 
     def fetch(self) -> t.Iterable[VoteEntry]:
         self._logger.info('VoteClient fetched')

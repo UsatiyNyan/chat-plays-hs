@@ -66,9 +66,11 @@ class VoteInterface:
             self._client.start(self._vote_options, self._max_count)
 
     def stop(self) -> list[int]:
+        winner_indices = choose_winners(self._vote_options, self._max_count)
+        winners = [self._vote_options[index] for index in winner_indices]
         if self._client is not None:
-            self._client.stop()
-        return choose_winners(self._vote_options, self._max_count)
+            self._client.stop(winners)
+        return winner_indices
 
     def fetch(self) -> list[VoteOption]:
         if self._client is None:

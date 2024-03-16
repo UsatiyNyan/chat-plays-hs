@@ -2,6 +2,7 @@ import typing as t
 import logging
 import urllib.parse
 import asyncio
+from datetime import datetime, UTC
 from threading import Thread
 
 import twitchio.ext.commands
@@ -18,20 +19,48 @@ class TwitchBot(twitchio.ext.commands.Bot):
                          prefix='!',
                          initial_channels=[channel],
                          case_insensitive=True)
+        self._channel = channel
         self._logger = logger
+        self._entries: list[VoteEntry] = []
 
     async def event_ready(self):
-        self._logger.info(f'Logged in as | {self.nick}')
-        self._logger.info(f'User id is | {self.user_id}')
+        self._logger.debug(f'Logged in as | {self.nick}')
+        self._logger.debug(f'User id is | {self.user_id}')
 
     async def event_message(self, message: twitchio.message.Message) -> None:
-        self._logger.info(f'[{message.author.name}]: {message.content}')
-        await super().event_message(message)
+        if message.echo:
+            return
 
-    @twitchio.ext.commands.command()
-    async def vote(self, ctx: twitchio.ext.commands.Context):
-        self._logger.info(f'vote: {ctx.message.content}')
-        await ctx.send('vote')
+        self._logger.debug(f'[{message.author.name}]: {message.content}')
+        ts = datetime.fromtimestamp(int(message._timestamp) / 1000, tz=UTC)
+        uid = message.author.name or ''
+        msg = message.content or ''
+        self._entries.append(VoteEntry(ts=ts, uid=uid, msg=msg))
+
+    async def start_vote(self, vote_options: list[VoteOption], max_count: int):
+        channel = self.get_channel(self._channel)
+        if channel is None:
+            self._logger.warning('Channel not found')
+            return
+        options = ', '.join(f'{v.alias}: {v.option}' for v in vote_options)
+        await channel.send(f'Vote started for {max_count} option(s): {options}!')
+
+    async def stop_vote(self, winners: list[VoteOption]):
+        channel = self.get_channel(self._channel)
+        if channel is None:
+            self._logger.warning('Channel not found')
+            return
+        if len(winners) == 1:
+            winner_name = winners[0].option
+            await channel.send(f'Winner is {winner_name}!')
+        else:
+            winner_names = ', '.join([w.option for w in winners])
+            await channel.send(f'Winners are {winner_names}!')
+
+    async def fetch_entries(self) -> list[VoteEntry]:
+        entries = self._entries
+        self._entries = []
+        return entries
 
 
 class TwitchVoteClient(VoteClient):
@@ -62,11 +91,18 @@ class TwitchVoteClient(VoteClient):
         self._bot_thread.join()
 
     def start(self, vote_options: list[VoteOption], max_count: int):
-        self._logger.info('VoteClient started')
+        asyncio.run_coroutine_threadsafe(
+            self._bot.start_vote(vote_options, max_count),
+            self._loop)
 
-    def stop(self):
-        self._logger.info('VoteClient stopped')
+    def stop(self, winners: list[VoteOption]):
+        asyncio.run_coroutine_threadsafe(
+            self._bot.stop_vote(winners),
+            self._loop)
 
     def fetch(self) -> t.Iterable[VoteEntry]:
-        self._logger.info('VoteClient fetched')
-        return []
+        future = asyncio.run_coroutine_threadsafe(
+            self._bot.fetch_entries(),
+            self._loop)
+        entries = future.result(timeout=None)
+        return entries

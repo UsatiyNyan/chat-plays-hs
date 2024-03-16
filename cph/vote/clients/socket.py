@@ -50,8 +50,8 @@ class SocketVoteClient(VoteClient):
             except BlockingIOError:
                 self._logger.warning('VoteClient not connected')
 
-    def stop(self):
-        super().stop()
+    def stop(self, winners: list[VoteOption]):
+        super().stop(winners)
 
     def fetch(self) -> t.Iterable[VoteEntry]:
         if self._client is None:
