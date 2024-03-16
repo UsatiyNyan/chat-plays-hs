@@ -8,12 +8,7 @@ from cph.game import handler
 from cph.game.model import GameOption
 
 from .controller import VoteController
-
-
-EMOTE_OPTIONS = [
-    GameOption(option=emote, group='Misc', suboptions=[])
-    for emote in ('Greetings', 'Well Played', 'Thanks', 'Wow', 'Oops', 'Threaten')
-]
+from .misc import END_TURN_OPTION
 
 
 class VoteHandler(handler.Handler):
@@ -56,11 +51,7 @@ class VoteHandler(handler.Handler):
             )
             for option, targets in zip(options, options_targets)
         ]
-        game_options.append(
-            GameOption(option='End Turn', group='Misc', suboptions=[]))
-        if self._controller.voteEmotes:
-            game_options.append(
-                GameOption(option='Emote', group='Misc', suboptions=EMOTE_OPTIONS))
+        game_options.append(END_TURN_OPTION)
 
         self._controller.set_game_options(game_options)
 

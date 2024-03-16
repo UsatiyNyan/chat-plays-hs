@@ -10,6 +10,7 @@ from cph.vote.model import VoteOption
 from cph.vote.interface import VoteInterface
 
 from .model import VoteModel
+from .misc import add_emote_option, remove_emote_option
 
 
 class VoteState(IntEnum):
@@ -48,6 +49,7 @@ class VoteController(QObject):
 
         self._interface = VoteInterface(self._logger)
         self._game_options: list[GameOption] = []
+        self._max_count = 0
 
     @Property(VoteModel, constant=True)
     def voteModel(self):
@@ -72,6 +74,7 @@ class VoteController(QObject):
         if self._voteEmotes != value:
             self._voteEmotes = value
             self.voteEmotesChanged.emit()
+            self.set_game_options(self._game_options, self._max_count)
 
     @Property(int, notify=voteSecondsTotalChanged)
     def voteSecondsTotal(self):
@@ -142,7 +145,13 @@ class VoteController(QObject):
         self._set_game_options(game_options, max_count)
 
     def _set_game_options(self, game_options: list[GameOption], max_count: int = 1):
+        if self.voteEmotes:
+            add_emote_option(game_options)
+        else:
+            remove_emote_option(game_options)
+
         self._game_options = game_options
+        self._max_count = max_count
         group_indices: DefaultDict[str, int] = DefaultDict(int)
         vote_options = []
         for game_option in game_options:
