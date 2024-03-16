@@ -3,17 +3,19 @@ import logging
 import urllib.parse
 from datetime import datetime, UTC
 
+from cph.resources import secrets
 from cph.utils.generator import is_not_none
 
 from .model import VoteOption
 from .client import VoteClient, VoteEntry
-from .clients import SocketVoteClient
+from .clients import SocketVoteClient, TwitchVoteClient
 from .prepare import parse_vote, calc_vote_weight, choose_winners
 
 
 class VoteInterface:
     def __init__(self, logger: logging.Logger):
         self._logger = logger
+        self._secrets: secrets.Secrets = secrets.load()
         self._client: VoteClient | None = None
 
         self._max_count: int = 0
@@ -32,10 +34,18 @@ class VoteInterface:
 
     def _make_client(self, url: urllib.parse.ParseResult) -> VoteClient | None:
         match url.scheme:
+            case 'https':
+                match url.netloc:
+                    case 'www.twitch.tv':
+                        return TwitchVoteClient(
+                                url.path.lstrip('/'),
+                                self._secrets,
+                                self._logger)
             case 'localhost':
                 return SocketVoteClient(self._logger)
             case _:
-                self._logger.error(f'VoteInterface: unknown scheme {url.scheme}')
+                self._logger.error(
+                    f'VoteInterface: unknown scheme {url.scheme}')
                 return None
 
     def disconnect(self):
@@ -53,7 +63,7 @@ class VoteInterface:
         self._uids_voted.clear()
         self._ts_begin = datetime.now(tz=UTC)
         if self._client is not None:
-            self._client.start()
+            self._client.start(self._vote_options, self._max_count)
 
     def stop(self) -> list[int]:
         if self._client is not None:

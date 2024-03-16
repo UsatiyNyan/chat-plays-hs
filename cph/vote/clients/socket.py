@@ -1,12 +1,13 @@
 import typing as t
 import logging
-import socket
 import urllib.parse
+import socket
 
 from enum import Enum, auto
 from datetime import datetime, UTC
 from cph.utils.generator import is_not_none
 
+from cph.vote.model import VoteOption
 from cph.vote.client import VoteClient, VoteEntry
 
 
@@ -40,8 +41,8 @@ class SocketVoteClient(VoteClient):
             self._client = None
         self._server.close()
 
-    def start(self):
-        super().start()
+    def start(self, vote_options: list[VoteOption], max_count: int):
+        super().start(vote_options, max_count)
         if self._client is None:
             try:
                 self._client, addr = self._server.accept()

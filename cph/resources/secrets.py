@@ -4,7 +4,8 @@ from dataclasses import dataclass
 
 @dataclass
 class Secrets:
-    RAPID_API_KEY: str
+    RAPID_API_KEY: str = ''
+    TWITCH_ACCESS_TOKEN: str = ''
 
 
 def load() -> Secrets:

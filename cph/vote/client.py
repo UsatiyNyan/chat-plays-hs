@@ -5,6 +5,8 @@ import urllib.parse
 from datetime import datetime
 from dataclasses import dataclass
 
+from .model import VoteOption
+
 
 @dataclass
 class VoteEntry:
@@ -23,8 +25,9 @@ class VoteClient:
     def disconnect(self):
         pass
 
-    def start(self):
-        self._logger.info('VoteClient started')
+    def start(self, vote_options: list[VoteOption], max_count: int):
+        self._logger.info('VoteClient started, '
+                          f'options: {vote_options}, max_count: {max_count}')
 
     def stop(self):
         self._logger.info('VoteClient stopped')
