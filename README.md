@@ -3,6 +3,22 @@
 "Chat plays HS" is an overlay, that allows streamers (currently only on Twitch) become the ultimate 
 victims of chat backseating.
 
+# Demo
+
+![mulligan](./pics/mulligan.png)
+
+![card](./pics/card.png)
+
+![target](./pics/target.png)
+
+![emote](./pics/emote.png)
+
+![emote suboption](./pics/emote_suboption.png)
+
+## Twitch bot
+
+![twitch](./pics/twitch.png)
+
 # Setup
 
 Find the latest release, and unzip it somewhere (the contents should be all laying as they are in the .zip file).
