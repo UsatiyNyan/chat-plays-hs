@@ -30,8 +30,10 @@ def calc_vote_weight(vote_indices: list[int]) -> int:
 
 
 def choose_winners(vote_options: list[VoteOption], max_count: int) -> list[int]:
-    enumerated_votes = enumerate(vote_option.votes for vote_option in vote_options)
-    sorted_votes = sorted(enumerated_votes, key=lambda x: x[1], reverse=True)
-    winners = islice(sorted_votes, max_count)
-    winner_indices = [index for index, _ in winners]
-    return winner_indices
+    enumerated_votes = enumerate(vote_option.votes for vote_option in vote_options)  # noqa
+    sorted_votes = sorted(enumerated_votes, key=lambda x: (x[1], x[0]), reverse=True)  # noqa
+    max_votes = max((vote_option.votes for vote_option in vote_options), default=0)  # noqa
+    threshold = max_votes // 2
+    contenders = filter(lambda x: x[1] > threshold, sorted_votes)
+    winners = islice(contenders, max_count)
+    return [x[0] for x in winners]
