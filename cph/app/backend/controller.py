@@ -14,7 +14,7 @@ from .game.parser import PowerLogParser
 class Controller(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
-        app_logger = make_logger('app', logging.DEBUG)
+        app_logger = logging.getLogger('app')
         self._voteController = VoteController(app_logger)
         self._gameController = GameController()
 

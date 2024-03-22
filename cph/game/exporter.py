@@ -10,7 +10,8 @@ import hslog.export
 import hslog.exceptions
 import hslog.parser
 
-from cph.game.handler import Handler
+from .handler import Handler
+from .board import Board
 
 
 class Exporter(hslog.export.BaseExporter):
@@ -136,6 +137,10 @@ class Exporter(hslog.export.BaseExporter):
         super().handle_metadata(packet)
 
     def handle_choices(self, packet: hslog.packets.Choices):
+        if self.game is None:
+            self.logger.warning('handle_choices: no game')
+            return
+
         card_choices = self._prepare_cards(packet.choices)
         known_card_choices = \
             list(filter(lambda x: x.card_id is not None, card_choices))
@@ -157,6 +162,10 @@ class Exporter(hslog.export.BaseExporter):
         self.handler.set_choices(known_card_choices, packet.max)
 
     def handle_options(self, packet: hslog.packets.Options):
+        if self.game is None:
+            self.logger.warning('handle_options: no game')
+            return
+
         def filter_options(options: t.Iterable[hslog.packets.Option]):
             return filter(lambda x: x.entity is not None and x.error is None, options)
 
@@ -169,7 +178,8 @@ class Exporter(hslog.export.BaseExporter):
             [list(prepare_options(filter_options(available_option.options)))
              for available_option in available_options]
 
-        self.handler.set_options(available_cards, available_targets)
+        self.handler.set_options(
+            Board.from_game(self.game), available_cards, available_targets)
 
     def handle_option(self, packet: hslog.packets.Option):
         self.logger.warning('option: {packet.entity} got thru somehow')

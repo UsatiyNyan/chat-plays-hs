@@ -36,6 +36,22 @@ Rectangle {
             color: Colors.borderSubtle01
         }
 
+        SettingsSwitch {
+            id: voteAutoModeSwitch
+
+            width: parent.width
+            text: 'Auto mode'
+
+            Component.onCompleted: checked = voteController.voteAutoMode
+            onCheckedChanged: voteController.voteAutoMode = checked
+        }
+
+        Rectangle {
+            width: parent.width
+            height: Units.px(1)
+            color: Colors.borderSubtle01
+        }
+
         SettingsSlider {
             id: voteSecondsSlider
 

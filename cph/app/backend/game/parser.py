@@ -3,6 +3,7 @@ from pathlib import Path
 from datetime import datetime
 
 from hslog import LogParser
+from hslog.exceptions import NoSuchEnum
 
 from cph.game import power_log, exporter, handler
 
@@ -21,7 +22,10 @@ class PowerLogParser:
         self._ts: datetime | None = None
 
     def _read_line(self, line: str):
-        self._parser.read_line(line)
+        try:
+            self._parser.read_line(line)
+        except NoSuchEnum as e:
+            self._logger.warning(f'no such enum: {e}')
 
     def parse_once(self):
         self._power_log_path, self._power_log_offset = \

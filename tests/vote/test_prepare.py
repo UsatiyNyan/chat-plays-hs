@@ -43,6 +43,7 @@ def test_calc_vote_weight(vote_indices, expected):
 @pytest.mark.parametrize(
     'vote_options, max_count, expected',
     [
+        ([VoteOption('a', 'a1', 0), VoteOption('b', 'b2', 0), VoteOption('c', 'c3', 0)], 1, [2]),  # noqa E501
         ([VoteOption('a', 'a1', 1), VoteOption('b', 'b2', 2), VoteOption('c', 'c3', 3)], 1, [2]),  # noqa E501
         ([VoteOption('a', 'a1', 1), VoteOption('b', 'b2', 2), VoteOption('c', 'c3', 3)], 2, [2, 1]),  # noqa E501
         ([VoteOption('a', 'a1', 1), VoteOption('b', 'b2', 1), VoteOption('c', 'c3', 2)], 2, [2]),  # noqa E501
@@ -50,6 +51,8 @@ def test_calc_vote_weight(vote_indices, expected):
         ([VoteOption('a', 'a1', 1), VoteOption('b', 'b2', 3), VoteOption('c', 'c3', 2)], 4, [1, 2]),  # noqa E501
         ([VoteOption('a', 'a1', 3), VoteOption('b', 'b2', 3), VoteOption('c', 'c3', 3)], 4, [2, 1, 0]),  # noqa E501
         ([VoteOption('a', 'a1', 1), VoteOption('b', 'b2', 2), VoteOption('c', 'c3', 3)], 0, []),  # noqa E501
+        ([VoteOption('a', 'a1', 0)], 1, [0]),  # noqa E501
+        ([VoteOption('a', 'a1', 1)], 1, [0]),  # noqa E501
         ([], 1, []),
         ([], 3, []),
     ]

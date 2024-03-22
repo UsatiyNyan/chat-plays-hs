@@ -13,7 +13,7 @@ import cph.utils.logging as cph_logging
 
 
 def main(argv):
-    main_logger = cph_logging.make_logger('main', logging.DEBUG)
+    main_logger = cph_logging.make_logger('app', logging.DEBUG)
 
     app = QGuiApplication(argv)
     app.setOrganizationName('@UsatiyNyan')

@@ -121,8 +121,8 @@ class VoteModel(QAbstractListModel):
             self.dataChanged.emit(
                 self.index(0), self.index(row_count - 1), [self.Roles.Votes])
 
-        self.votesMax = max(vote_option.votes for vote_option in vote_options)
-        self.votesSum = sum(vote_option.votes for vote_option in vote_options)
+        self.votesMax = max((vote_option.votes for vote_option in vote_options), default=0)  # noqa
+        self.votesSum = sum((vote_option.votes for vote_option in vote_options), start=0)  # noqa
 
 
 qmlRegisterType(VoteModel, 'Frontend.Bindings', 1, 0, 'VoteModel')

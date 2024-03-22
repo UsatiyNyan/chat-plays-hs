@@ -16,6 +16,7 @@ Item {
 
     readonly property ListModel voteModel: VoteModel {}
     property bool voteEmotes: true
+    property bool voteAutoMode: false
     property int voteSecondsLeft: 10
     property int voteSecondsTotal: 10
     property list<int> voteWinnerIndices: [5]

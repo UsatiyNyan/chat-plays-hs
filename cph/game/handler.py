@@ -2,28 +2,20 @@ import logging
 
 from hearthstone.entities import Card
 
+from .board import Board
+
 
 class Handler:
-    def set_options(self, options: list[Card], options_targets: list[list[Card]]):
-        pass
-
-    def set_choices(self, choices: list[Card], max_count: int):
-        pass
-
-    def clear(self):
-        pass
-
-
-class LoggingHandler(Handler):
     def __init__(self, logger: logging.Logger):
-        self.logger = logger
+        self._logger = logger
 
-    def set_options(self, options: list[Card], options_targets: list[list[Card]]):
+    def set_options(self, board: Board, options: list[Card], options_targets: list[list[Card]]):
+        self._logger.debug(f'[handler][options] {board=}')
         for option, targets in zip(options, options_targets):
-            self.logger.debug(f'option: {option} -> {targets}')
+            self._logger.debug(f'[handler][option] {option} -> {targets}')
 
     def set_choices(self, choices: list[Card], max_count: int):
-        self.logger.debug(f'max={max_count} choices={choices}')
+        self._logger.debug(f'[handler][choices] {choices} max={max_count}')
 
     def clear(self):
-        self.logger.debug('clear')
+        self._logger.debug('clear')

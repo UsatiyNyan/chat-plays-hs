@@ -1,12 +1,16 @@
 from dataclasses import dataclass
 
-from hearthstone.enums import Zone
+from hearthstone.enums import CardType, Zone
 
 
 @dataclass
 class GameOption:
     option: str
     group: str
+    entity_id: int
+    card_type: CardType
+    zone: Zone
+    zone_pos: int
     suboptions: list['GameOption']
 
     def select(self, index: int) -> 'GameOption | None':
