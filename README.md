@@ -55,3 +55,63 @@ Currently that's it, click around and, I hope you would understand whats happeni
 
 Start playing the game, press `Start vote` button and see what's happening from there!
 
+# For advanced users
+
+If you have innate fear of binaries, or want to start it up on your own, then you should have these installed:
+- python version>=11
+- pip
+- venv
+
+## Setup
+
+in the repo root
+
+- initialize virtual env (recommended!)
+```shell
+python -m venv venv
+.\venv\Scripts\activate
+```
+- install dependencies
+```shell
+pip install -r requirements.txt
+```
+
+## Startup
+
+- run app
+```shell
+python -m cph.app.main
+```
+
+## debug and tools
+
+- debug ui
+```shell
+python -m cph.app.main_ui
+```
+
+- debug qrc
+```shell
+python -m cph.tests.app.debug_resources
+```
+
+- run tests
+```shell
+python -m pytest tests
+```
+
+- update card collection
+```shell
+python -m cph.cli.download_card_names
+```
+
+- and some other cli utils
+```shell
+python -m cph.cli.name_of_script
+```
+
+## Distribution
+
+```shell
+pyinstaller .\chat_plays_hs.spec
+```
