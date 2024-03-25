@@ -10,7 +10,7 @@ from cph.game.board import Board
 from cph.game.model import GameOption
 
 from .controller import VoteController
-from .misc import END_TURN_OPTION, make_suboptions
+from .misc import END_TURN_OPTION, make_suboptions, make_deck_option
 
 
 class VoteHandler(handler.Handler):
@@ -36,17 +36,25 @@ class VoteHandler(handler.Handler):
         if self._controller.is_busy or not self._check_prev_cards(options):
             return
 
-        game_options = [
-            GameOption(
-                option=self._card_name(option),
-                group=GameOption.make_group(option.zone),
-                entity_id=option.id,
-                card_type=CardType(option.type),
-                zone=Zone(option.zone),
-                zone_pos=option.tags.get(GameTag.ZONE_POSITION, 0),
-                suboptions=make_suboptions(board, option, targets, self._card_name))
-            for option, targets in zip(options, options_targets)
-        ]
+        game_options: list[GameOption] = []
+
+        for option, targets in zip(options, options_targets):
+            if len(targets) == 1 and targets[0].id == option.id and \
+                (option.tags.get(GameTag.TRADEABLE) is not None or
+                 option.tags.get(GameTag.FORGE) is not None):
+                game_options.append(make_deck_option(option, self._card_name))
+            else:
+                game_options.append(
+                    GameOption(
+                        option=self._card_name(option),
+                        group=GameOption.make_group(option.zone),
+                        entity_id=option.id,
+                        card_type=CardType(option.type),
+                        zone=Zone(option.zone),
+                        zone_pos=option.tags.get(GameTag.ZONE_POSITION, 0),
+                        suboptions=make_suboptions(board, option, targets, self._card_name))
+                )
+
         game_options.append(END_TURN_OPTION)
 
         self._controller.set_game_options(board, game_options)

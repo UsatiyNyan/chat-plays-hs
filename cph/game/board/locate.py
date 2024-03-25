@@ -111,6 +111,11 @@ def locate_anywhere(logger: Logger, window_bb: WindowBB) -> Vec2:
     return center
 
 
+def locate_deck(logger: Logger, window_bb: WindowBB) -> Vec2:
+    logger.debug('[locate] deck')
+    return Vec2(1600, 650)
+
+
 emote_positions = (
     Vec2(770, 860),
     Vec2(760, 770),
@@ -137,6 +142,10 @@ def locate(logger: Logger,
         return locate_choice(logger, window_bb, len(game_options), index)
 
     game_option = game_options[index]
+
+    is_deck = game_option.zone == Zone.DECK
+    if is_deck and game_option.option == misc.DECK_OPTION_NAME:
+        return locate_deck(logger, window_bb)
 
     is_hand = game_option.zone == Zone.HAND
     if is_hand:

@@ -37,6 +37,17 @@ ANYWHERE_OPTION = GameOption(
     suboptions=[]
 )
 
+DECK_OPTION_NAME = 'Deck'
+DECK_OPTION = GameOption(
+    option=DECK_OPTION_NAME,
+    group=TARGET_GROUP,
+    entity_id=0,
+    card_type=CardType.INVALID,
+    zone=Zone.DECK,
+    zone_pos=0,
+    suboptions=[]
+)
+
 
 def _make_emote_option(suboptions: list[GameOption]):
     return [
@@ -113,3 +124,15 @@ def make_suboptions(board: Board, option: Card, targets: list[Card], card_name: 
         if len(target_suboptions) == 0:
             return [ANYWHERE_OPTION]
     return target_suboptions
+
+
+def make_deck_option(option: Card, card_name: t.Callable[[Card], str]) -> GameOption:
+    return GameOption(
+        option=f'(Deck) {card_name(option)}',
+        group=GameOption.make_group(option.zone),
+        entity_id=option.id,
+        card_type=CardType(option.type),
+        zone=Zone(option.zone),
+        zone_pos=option.tags.get(GameTag.ZONE_POSITION, 0),
+        suboptions=[DECK_OPTION]
+    )
