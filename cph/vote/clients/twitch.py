@@ -31,7 +31,6 @@ class TwitchBot(twitchio.ext.commands.Bot):
         if message.echo:
             return
 
-        self._logger.debug(f'[{message.author.name}]: {message.content}')
         ts = datetime.fromtimestamp(int(message._timestamp) / 1000, tz=UTC)
         uid = message.author.name or ''
         msg = message.content or ''
